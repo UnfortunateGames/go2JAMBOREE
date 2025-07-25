@@ -2,12 +2,10 @@ import os
 import random
 import time
 
-# Just the essentials!
-# And do not mess with this, its basically the CORE
-# of the whole game.
+# Don't touch these!
+# These are essentials...
 
-# Forget all the random spaghetti code, THIS is the
-# final boss of debugging.
+# Just the skeletal system of the whole code-base
 
 def cls() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')

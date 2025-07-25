@@ -1,6 +1,10 @@
 from cmds.__cmds__ import wait
 import backend.__backend__ as BE
 
+# Might go insane over creating sprites
+
+# Probably...
+
 logo = """
        "====go-2================"
     .  |--. _ . . _  _  _  __ __|  .

@@ -1,11 +1,6 @@
 from cmds.__cmds__ import rRN  
 
-# This is the BACKEND of the game.
-# (yeah no shit...)
-
-# I'm just hoping you use most of this to
-# interact with stats and not dump all
-# stat management in __main__
+# D.R.Y. won't be happy with this...
 
 taskList: dict = {
     "list": ["CT", "PM", "DE", "SC"],

@@ -2,13 +2,9 @@ from cmds.__cmds__ import cls, wait
 import backend.__backend__ as BE
 import gui.__gui__ as G
 
-# hopefully this isn't filled with a BUNCH of
-# spaghetti code that is a whole wrap-around and
-# can be written in like, idk under 300 lines.
-
-# i'm deeply sorry for this lol
-
-# yeah ngl we cooked if we try to read ts
+# HOOOOOLLYYYYY SHIIIIIIII-
+# This code makes me want to rip my insides out.
+# No seriously.
 
 leftKB: str = "left"
 upKB: str = "up"
