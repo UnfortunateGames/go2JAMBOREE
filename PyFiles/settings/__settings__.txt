@@ -1,0 +1,12 @@
+[KEYBINDS]
+1 - move left
+2 - move up
+3 - move right
+4 - move down
+5 - task
+6 - acts
+7 - act check
+8 - act ask
+9 - act sleep
+10 - menu
+11 - back

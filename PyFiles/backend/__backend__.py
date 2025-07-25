@@ -165,10 +165,11 @@ def mvGTime(amount=1) -> None:
     global GTime, WTime, curTask, doneTask, heardTask
     if amount is None:
         initVar()
-        GTime = 6
+        GTime -= 4
         WTime = "Day"
         updTVal()
         curTask = taskList[taskList["list"][rRN(0, len(taskList["list"]))]]
+        heardTask = doneTask = False
         hPlayer()
         return
     GTime += amount
@@ -205,7 +206,7 @@ def initVar(onlyPlayer=False) -> None:
 
 def saveG():
     try:
-        with open('backend/saveFile/__save__.txt', 'w') as F:
+        with open('PyFiles/backend/saveFile/__save__.txt', 'w') as F:
             F.write(f"{curChar}\n")
             F.write(f"{curStats}\n")
             F.write(f"{curLoc}\n")
