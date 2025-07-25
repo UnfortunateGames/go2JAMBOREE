@@ -1,4 +1,5 @@
 from cmds.__cmds__ import rRN
+import os
 
 # This is the BACKEND of the game.
 # (yeah no shit...)
@@ -208,9 +209,8 @@ def saveG():
         print("Unable to save game... Current game will not load after you exit.")
         return False
     except FileNotFoundError:
-        print("File does not exist, creating new save file and retrying...")
-        open('backend/saveFile/__save__.txt')
-        saveG()
+        print("File does not exist, make sure that PyFile/backend/saveFile/__save__.txt exists. Aborting.")
+        return False
     except Exception as e:
         raise e
 
