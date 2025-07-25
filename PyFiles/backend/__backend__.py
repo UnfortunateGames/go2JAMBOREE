@@ -1,5 +1,4 @@
-from cmds.__cmds__ import rRN
-import os
+from cmds.__cmds__ import rRN  
 
 # This is the BACKEND of the game.
 # (yeah no shit...)
