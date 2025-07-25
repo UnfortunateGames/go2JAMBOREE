@@ -178,6 +178,13 @@ locSprites: dict = {
 
 curMenu: int = 0
 
+def fcheckSprite() -> str:
+    if BE.WTime == "Day":
+        x = DcheckSprite
+    elif BE.WTime == "Night":
+        x = NcheckSprite
+    return x
+
 def fLocDisplay(returnSprite=False) -> None or str:
     if returnSprite is True:
         return daySky if BE.WTime == "Day" else nightSky + locSprites[BE.curLoc[1]][BE.curLoc[0]]

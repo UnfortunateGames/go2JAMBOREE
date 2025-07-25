@@ -49,7 +49,7 @@ def initAct():
         G.fLocDisplay()
         print(G.displayStat())
         G.actScroll()
-        x = input(f"\n{" "* 5}< ! ? ) >>")
+        x = input(f"\n{" "* 5}< ! ? ) >> ")
         if x == "sleep" and BE.curLoc == [1, 0] and BE.canSleep is True:
             cls()
             BE.mvGTime(None)
@@ -68,7 +68,7 @@ def initAct():
             wait(1)
         elif x == "check":
             cls()
-            print(G.checkSprite)
+            print(G.fcheckSprite())
             print(G.fcheckActs())
             input(f"\n{" " * 6}Press Enter to continue...")
         elif x == "back":
@@ -221,6 +221,8 @@ def initMenu() -> None:
         BE.initVar()
         BE.curLoc = [2, 0]
         initIntro()
+    elif x == "settings" or x == "setting":
+        initSettings()
     elif x == "characters" or x == "character":
         initChChar()
     elif x == "credits" or x == "credit":
