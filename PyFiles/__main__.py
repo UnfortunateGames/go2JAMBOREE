@@ -20,7 +20,7 @@ def initMove():
             BE.hPlayer("hp", BE.curDrainStats[0])
             BE.hPlayer("stamina", BE.curDrainStats[1])
         cls()
-        print(G.fLocDisplay())
+        G.fLocDisplay()
         print(G.displayStat())
         G.actScroll()
         x = input(f"{" " * 5}< ! ? ) >> ").lower()
@@ -46,7 +46,7 @@ def initMove():
 def initAct():
     while True:
         cls()
-        print(G.fLocDisplay())
+        G.fLocDisplay()
         print(G.displayStat())
         G.actScroll()
         x = input(f"\n{" "* 5}< ! ? ) >>")
@@ -62,7 +62,7 @@ def initAct():
             BE.heardTask = True
             for x in G.fTaskDialogue():
                 cls()
-                print(G.fLocDisplay())
+                G.fLocDisplay()
                 G.printAnim(x, "\n\n")
                 wait(1)
             wait(1)
@@ -83,20 +83,30 @@ def initWait() -> None:
         input(f"{" " * 5}I'm tired of waiting...")
         return
     cls()
-    print(G.fLocDisplay())
+    G.fLocDisplay()
     print(G.displayStat())
     while True:
         x = input(f"\n{" "}For how long? ( 'Back' to exit ) > ")
         if x is not int:
+            if x == "back":
+                x = 0
+                break
             input(f"\n{" " * 5}That's not a number...")
         else:
+            BE.canWait = False
             break
     BE.mvGTime(x)
+    if x != 0:
+        cls()
+        G.printAnim("A few hours of waiting...", "\n\n\n")
+        wait(1)
+    G.curMenu = 0
+    initDisplay()
 
 def initDisplay() -> None:
     while True:
         cls()
-        print(G.fLocDisplay())
+        G.fLocDisplay()
         print(G.displayStat())
         G.actScroll()
         x = input(f"{" " * 5}< ! ) >> ").lower()
@@ -135,10 +145,10 @@ def initIntro() -> None:
         G.printAnim(x, "\n\n\n")
         wait(2)
     cls()
-    G.printAnim(G.fLocDisplay(), "")
+    G.printAnim(G.fLocDisplay(True), "")
     for x in dialogue2:
         cls()
-        print(G.fLocDisplay())
+        G.fLocDisplay()
         G.printAnim(x, "\n")
         wait(1)
     cls()
@@ -175,6 +185,25 @@ def initChChar() -> None:
             input(f"\n{" " * 6}{y} is not a valid Command!")
     initMenu()
 
+def initSettings() -> None:
+    while True:
+        cls()
+        print(G.logo)
+        G.menuScroll(G.settingMenu)
+        x = input(f"\n{" " * 6}< ? ) >> ").lower()
+        if x == "keybind":
+            cls()
+            print(f"\n\n\n{" " * 8}Keybinds will come soon!")
+            wait(2)
+        elif x == "save":
+            BE.saveG()
+            input(f"\n{" " * 5}Game saved successfully!")
+        elif x == "back":
+            break
+        else:
+            input(f"{" " * 5}{x} is not a valid option")
+    initMenu()
+
 def initMenu() -> None:
     global hasStartedGame
     cls()
@@ -185,7 +214,7 @@ def initMenu() -> None:
         if hasStartedGame is False:
             hasStartedGame = True
             cls()
-            G.printAnim(G.fLocDisplay())
+            G.printAnim(G.fLocDisplay(True))
             wait(1)
         initDisplay()
     elif x == "new game" or x == "new":
