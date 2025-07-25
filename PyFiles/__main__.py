@@ -104,12 +104,12 @@ def initAct():
             initDisplay()
         elif x == "ask" and BE.curLoc == [0, 1]:
             BE.curTask = BE.taskList["list"][BE.curRNG]
-            BE.heardTask = True
             for x in G.fTaskDialogue():
                 cls()
                 G.fLocDisplay()
                 G.printAnim(x, "\n\n")
                 wait(1)
+            BE.heardTask = True
             wait(1)
         elif x == "check":
             cls()
