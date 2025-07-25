@@ -112,6 +112,8 @@ heardTask: bool = False
 doneTask: bool = False
 canWait: bool = True
 
+deaths: int = 0
+
 def checkTask(n=int) -> bool:
     task = taskList[taskList["list"][curRNG]]
     if n == 1 and curTask != "CT":
@@ -133,6 +135,13 @@ def hPlayer(stat=None, amount=None) -> None:
             curStats[1] = curMaxStats[1]
         else:
             curStats[1] += amount
+
+def checkDeath() -> int:
+    if curStats[0] <= 0:
+        return 1
+    elif curStats[1] <= 0:
+        return 2
+    return 0
 
 def updTVal() -> any:
     global GTime, WTime, Weth, curTime, canSleep

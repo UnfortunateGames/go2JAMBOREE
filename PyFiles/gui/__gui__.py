@@ -27,7 +27,7 @@ def fmainActs() -> str:
      Main Options:
        (  Move  )=============[ ! ]
        (  Acts  )=============[ {"!" if BE.curLoc == [0, 1] or BE.curLoc == [1, 0]else " "} ]
-       (  Task  )=============[ {"!" if BE.checkTask is True else " "} ]
+       (  Task  )=============[ {"!" if BE.checkTask() is True else " "} ]
        (  Wait  )=============[ {"!" if BE.canWait is True else " "} ]
     
     << 'Menu' to Main Menu
@@ -62,6 +62,14 @@ def fcheckActs() -> str:
        ( Task  )==============[ {"!" if BE.doneTask is False else "~"} ]
        ( Sleep )==============[ {"!" if BE.canSleep is True else "~"} ]
        ( Wait  )==============[ {"!" if BE.canWait is True else "~"} ]
+"""
+
+gameOver: str = """
+           GAME OVER!!
+
+            > ( Menu / Back )
+
+            > [  Continue?  ]
 """
 
 mainMenu: str = """

@@ -12,6 +12,51 @@ import gui.__gui__ as G
 
 hasStartedGame: bool = False
 
+def initDeath() -> None:
+    BE.deaths += 1
+    cls()
+    wait(2)
+    G.printAnim("Your vision starts to fade...", "\n\n\n")
+    wait(1)
+    cls()
+    if BE.checkDeath() == 1:
+        BE.curLoc == [2, 0]
+        G.printAnim("Nggghh... My wounds...", "\n\n\n")
+        wait(1)
+        cls()
+    elif BE.checkDeath() == 2:
+        BE.curLoc == [1, 0]
+        G.printAnim("I should have slept by now...", "\n\n\n")
+        wait(1)
+        cls()
+    wait(2)
+    if BE.deaths >= 3:
+        G.printAnim("Oh no... Your decay.", "\n\n\n")
+        wait(1)
+        G.printAnim("It's too severe...", "\n")
+        wait(1)
+        G.printAnim("I'm sorry...", "\n")
+        wait(2)
+        cls()
+        print(f"\n\n\n{" " * 15}Game over!\n{" " * 14}Try again? :P")
+        G.menuScroll(G.gameOver)
+        x = input(f"\n\n\n{" " * 6}< ? ) >> ").lower()
+        if x == "menu" or x == "back":
+            initMenu()
+        elif x == "continue?" or x == "continue":
+            BE.initVar()
+            initIntro()
+    BE.hPlayer()
+    G.printAnim("Oh you poor thing.", "\n\n\n")
+    wait(1)
+    G.printAnim("You can always try again.", "\n")
+    wait(1)
+    G.printAnim("As long as I am here.", "\n")
+    wait(1)
+    cls()
+    wait(2)
+    initDisplay()
+
 def initMove():
     while True:
         BE.mvGTime()
