@@ -404,7 +404,7 @@ def initGame() -> None:
     cls()
     BE.curLoc = [1, 0]
     print(G.logo + "\n")
-    print(G.fLocDisplay())
+    G.fLocDisplay()
     wait(2)
     input(f"\n\n{" " * 6}Press Enter to continue... ")
     G.curMenu = 0
