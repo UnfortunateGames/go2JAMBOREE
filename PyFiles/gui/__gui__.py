@@ -22,7 +22,12 @@ def checkAct(n=str) -> str:
     elif n == "d" and BE.curLoc[1] != 1:
         return True
     elif n == "do":
-        if BE.curLoc == [0, 1] or BE.curLoc != [1, 0]:
+        if BE.curLoc == [0, 1] or BE.checkTask() is True:
+            return True
+        elif BE.curLoc == [0, 0] or BE.curTask == "CT":
+            return True
+    elif n == "collect":
+        if BE.curLoc == [0, 0] or BE.curLoc == [2, 1]:
             return True
     return False
 
@@ -54,6 +59,7 @@ def factionActs() -> str:
        ( Sleep )==============[ {"!" if BE.curLoc == [1, 0] and BE.canSleep is True else " "} ]
        ( Check )==============[ ! ]
        (  Ask  )==============[ {"!" if BE.curLoc == [0, 1] else " "} ]
+       (Collect)==============[ {"!" if BE.curLoc == [0, 0] or BE.curLoc == [2, 1] else " "} ]
 
     < 'Back' to Main Options
 """
@@ -99,10 +105,33 @@ creditMenu: str = """
 settingMenu: str = """
            Settings:
 
-           ( KeyBinds )[SOON]
-            > (  Save  )
+            > ( KeyBinds )
+            > ( Load KBs )
+            > (   Save   )
           
           < 'Back' to Main Menu
+"""
+
+def fkeyChange() -> str:
+    return """
+ _0_                                _0_
+ | |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| |
+
+     Key-Binds:
+      [ MOVE KBs ]  |  [ ACTS KBs ]
+      > ( Left  )   |  > (  Act  )
+      > (  Up   )   |  > (  Ask  )
+      > ( Right )   |  > ( Check )
+      > ( Down  )   |  > ( Sleep )
+                    |
+      [ MISC KBs ]  |   //_Electric       
+      > ( Tasks )   |  /_ /-Splash-
+      > ( Back  )   |   //=========
+      > ( Menu  )   |  [##########]
+   << 'Exit' to exit this menu
+
+ |_|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|_|
+  0                                  0
 """
 
 nightSky: str = """
@@ -115,49 +144,64 @@ daySky: str = """
 :::::::::::::::::::::::::::::::::::.  .:
 ':':':':':':':':':':':':':':':':':':':':"""
 
-FESpr: str = """/ \_//\_________________________________
+FESpr: str = """
+/ \_//\_________________________________
 / .//  \ ---   . "     '     "     '  " 
  / \/  \   __ .  .    '   "     "      
  "|" |||  |  "    '    "     '    "    "
 """
 
-CaSpr: str = """______.----.____________________________
+CaSpr: str = """
+______.----.____________________________
   "  / [] /|\ '   " '  "  . ___ . ______
  "  /____/_|_\ "   '   " _ . _____ . ___
     "   '     "    '     "    '   "  ' '
 """
 
-SpSpr: str = """________________________________________
+SpSpr: str = """
+________________________________________
 _____ . __   " .-------.   '      "    "
 __________ .  ( <=====> )   "      '  "
  " " '    "   ''-------'     "   '   "  
 """
 
-Cl0Spr: str = """____________ . . . . . . . . . . . . . .
+Cl0Spr: str = """
+____________ . . . . . . . . . . . . . .
  " "   '  /'::::::::::::::::::::::::::::
     "   '|;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 "   ' " /; ~    ~      ~     ~     ~
 """
 
-AlSpr: str = """^./ \___________________________________
+AlSpr: str = """
+^./ \___________________________________
    '  "|  '  .___. "  '    "    '   "   
  "  '  '  '- .|~|.   "      "      '  "
   '   " '--  '---' ""   '  "   "  '  "  
 """
 
-SLSpr: str = """________________________________________
+SLSpr: str = """
+________________________________________
 "     ' __.._.________.--.___     "    "
   '    /   ~      ~     ~   ~ \    '  "
  " " .'  ~     ~       ~   ~   '.    "  
 """
 
-PlSpr: str = """________________________________________
-"     '      "      "      '      "    "
-  '      "      '    "      "      '  "
- " " '    "   '      "       "   '   "  
+Pl0Spr: str = """
+________________________________________
+"     '      "      "      '   .-."    "
+  '      "      '    "  "  __ /;-/ '  "
+ " " '    "   '      "     '-'--''   "  
 """
 
-Cl1Spr: str = """____________ . . . . . . . . . . . . . .
+Pl1Spr: str = """
+________________________________________
+.  ____'....'"      "      '   .-."    "
+ '( ;_'_'..'     '    "  "  __ /;-/ '  "
+ " ||  | |    '      "     '-'--''   "  
+"""
+
+Cl1Spr: str = """
+____________ . . . . . . . . . . . . . .
    '   "  |/-..--''--..--''--..--''--..-
   '  "   |/'..''..''..''..''..''..''..''
 "  '  " //-..--''--..--''--..--''--..--'
@@ -183,50 +227,67 @@ DcheckSprite: str = """
 ::::::::::::::::::::::::::::::::::::::::
 """
 
+mapSprite: str = """
+   /'--''-''''-'/
+  / X--.^.'-. <'
+ .>^ -:.' 7 O/
+/__.___...._/
+"""
+
 locSprites: dict = {
     0: [FESpr, CaSpr, SpSpr, Cl0Spr],
-    1: [AlSpr, SLSpr, PlSpr, Cl1Spr]
+    1: [AlSpr, SLSpr, [Pl0Spr, Pl1Spr], Cl1Spr]
 }
 
 curMenu: int = 0
 
 def fcheckSprite() -> str:
     if BE.WTime == "Day":
-        x = DcheckSprite
+        return DcheckSprite
     elif BE.WTime == "Night":
-        x = NcheckSprite
-    return x
+        return NcheckSprite
+
 
 def fLocDisplay(returnSprite=False) -> None or str:
+    sky = daySky if BE.WTime == "Day" else nightSky
+    loc = locSprites[BE.curLoc[1]][BE.curLoc[0]]
+    if BE.curLoc == [2, 1]:
+        if BE.PLanimalChance is True:
+            loc = loc[1]
+        elif BE.PLanimalChance is False:
+            loc = loc[0]
+    Sprite = sky + loc
     if returnSprite is True:
-        return daySky if BE.WTime == "Day" else nightSky + locSprites[BE.curLoc[1]][BE.curLoc[0]]
-    print(daySky if BE.WTime == "Day" else nightSky)
-    print(locSprites[BE.curLoc[1]][BE.curLoc[0]])
+        return Sprite
+    print(Sprite)
 
 def fCharMenu(x, y) -> str:
-    charlist = [BE.newbieStats["max"], BE.expertStats["max"]]
+    charlist = [BE.newbieStats["max"], BE.expertStats["max"], BE.sustainerStats["max"], BE.fallenStats["max"]]
+    desclist = [BE.newbieStats["desc"], BE.expertStats["desc"], BE.sustainerStats["desc"], BE.fallenStats["desc"]]
     char = charlist[x]
     Stats = [0, 1]
     Stats[0] = char[0]
     Stats[1] = char[1]
+    desc = desclist[x]
     return f"""
           < Left    |    Right >
            Health: {y}
             > {Stats[0]}   /|\  Stamina:
                    / \  > {Stats[1]}
+         "{desc}"
         < 'Back' to Main Menu
 """
 
 def fTaskDialogue() -> list:
     if BE.doneTask is True:
-        return ["You have done your work.", "There is nothing else I can ask.", "Go ahead.", "Explore my creation"]
+        return ["You have done your work.", "There is nothing else I can ask.", "Go ahead.", "Explore my creation."]
     elif BE.heardTask is False:
-        return ["You came back.", f"Your task is {BE.taskList[BE.curTask]["name"]}.", "Carry on."]
+        return ["You came back.", f"Your task is {BE.taskList[BE.curTask]["name"]}", "Carry on."]
     return ["Did you forget?", f"I ordered you to {BE.taskList[BE.curTask]["name"]}"]
 
 def printAnim(m=str, before=str) -> None:
     L = list(m)
-    x = 3.5 / (len(L) * len(L))
+    x = 3 / (len(L) * len(L))
     y = x
     b = " " * int((40 - len(L)) / 2)
     print(before + b, end="", flush=True)

@@ -1,6 +1,13 @@
-from cmds.__cmds__ import rRN  
+from cmds.__cmds__ import rRN
+import gui.__gui__ as G 
 
 # D.R.Y. won't be happy with this...
+
+def PLanimalChance() -> bool:
+    if rRN(0, 10) <= 6:
+        return False
+    elif rRN(0, 10) > 6:
+        return True
 
 taskList: dict = {
     "list": ["CT", "PM", "DE", "SC"],
@@ -8,25 +15,21 @@ taskList: dict = {
         "name": "Chop Trees.",
         "LocOpt": [0, 0],
         "Drain": [0, -6],
-        "ActOption": "collect"
     },
     "PM": {
         "name": "Praise Me.",
         "LocOpt": [0, 1],
         "Drain": [0, -4],
-        "ActOption": "praise",
     },
     "DE": {
         "name": "Don't Eat.",
         "LocOpt": [0, 1],
         "Drain": [-3, -5],
-        "ActOption": None
     },
     "SC": {
         "name": "Sacrifice.",
         "LocOpt": [0, 1],
         "Drain": [-6, -2],
-        "ActOption": "sacrifice"
     }
 }
 
@@ -37,13 +40,13 @@ locList: dict = {
     },
     "FE": {
         "name": "The Forest Entrance.",
-        "specialAct": True,
-        "specialFunc": 1,
+        "specialAct": None,
+        "specialFunc": None,
     },
     "Ca": {
         "name": "The Campsite.",
-        "specialAct": "Sleep",
-        "specialFunc": 2,
+        "specialAct": None,
+        "specialFunc": None,
     },
     "Sp": {
         "name": "My Spawn.",
@@ -57,18 +60,18 @@ locList: dict = {
     },
     "Al": {
         "name": "His Altar.",
-        "specialAct": "Ask",
-        "specialFunc": 3,
+        "specialAct": None,
+        "specialFunc": None,
     },
     "SL": {
         "name": "A Small Lake.",
-        "specialAct": None,
-        "specialFunc": None,
+        "specialAct": "collect",
+        "specialFunc": 1,
     },
     "Pl": {
         "name": "Just plains.",
-        "specialAct": None,
-        "specialFunc": None,
+        "specialAct": "kill",
+        "specialFunc": PLanimalChance(),
     },
     "Cl1": {
         "name": "More Cliffs",
@@ -77,14 +80,42 @@ locList: dict = {
     }
 }
 
+itemList: dict = {
+    "list": ["Map", "Meat"],
+    "Map": {
+        "desc": "If I ever get lost...",
+        "sprite": None,
+        "specialFunc": 1
+    },
+    "Meat": {
+        "desc": "Yum...",
+        "sprite": None,
+        "specialFunc": 2
+    }
+}
+
 newbieStats: dict = {
+    "desc": "My first creation.",
     "max": [10, 15],
-    "drain": [0, -2]
+    "drain": [0, -1]
 }
 
 expertStats: dict = {
+    "desc": "Long forgotten.",
     "max": [20, 25],
     "drain": [0, -3]
+}
+
+sustainerStats: dict = {
+    "desc": "Gluttony.",
+    "max": [30, 12],
+    "drain": [-2, 0]
+}
+
+fallenStats: dict = {
+    "desc": "My angel, I'm sorry.",
+    "max": [15, 1],
+    "drain": [-2, 0]
 }
 
 curStats: list = [10, 15]
@@ -95,7 +126,12 @@ curDrainStats: list = [0, -2]
 curChar: str = "Newbie"
 curLoc: list = [2, 0]
 curRNG: int = 0
-curTask: dict = None
+curTask: str = None
+inventory: dict = {
+    "Meat": 0,
+    "Apples": 0,
+    "Map": 1
+}
 
 GTime: int = 0
 curTime: int = 0
@@ -174,13 +210,6 @@ def mvGTime(amount=1) -> None:
         hPlayer("hp", curDrainStats[0])
         hPlayer("stamina", curDrainStats[1])
 
-def specialLocAct() -> any:
-    locCheck = locList[locList["list"][curLoc[1]][curLoc[0]]]
-    if locCheck["specialAct"] is True:
-        return locCheck["specialFunc"]
-    elif locCheck["specialAct"] is str:
-        return [locCheck["specialAct"], locCheck["specialFunc"]]
-
 def initVar(onlyPlayer=False) -> None:
     global curStats, curMaxStats, curDrainStats, curRNG, GTime, doneTask, heardTask, canSleep, canWait
     if curChar == "Newbie":
@@ -202,18 +231,18 @@ def initVar(onlyPlayer=False) -> None:
 def saveG():
     try:
         with open('PyFiles/backend/saveFile/__save__.txt', 'w') as F:
-            F.write(f"{curChar}\n")
-            F.write(f"{curStats}\n")
-            F.write(f"{curLoc}\n")
-            F.write(f"{curRNG}\n")
-            F.write(f"{curTask}\n")
-            F.write(f"{doneTask}\n")
+            L = [curChar, curStats, curLoc, curRNG, curTask, doneTask]
+            for x in L:
+                F.write(f"{x}\n")
         return True
     except PermissionError:
-        print("Unable to save game... Current game will not load after you exit.")
+        G.Cprint("Unable to save game...")
+        G.Cprint("Current game will not load.")
         return False
     except FileNotFoundError:
-        print("File does not exist, make sure that PyFile/backend/saveFile/__save__.txt exists. Aborting.")
+        G.Cprint("Save file does not exist.")
+        G.Cprint("Recreate the save file in:")
+        G.Cprint("( PyFiles/backend/saveFile )")
         return False
     except Exception as e:
         raise e
@@ -224,6 +253,9 @@ def loadG():
     try:
         with open('backend/saveFile/__save__.txt', 'r') as F:
             L = F.readlines()
+            if len(L) < 6:
+                G.Cprint("Save File seems to be missing values or is empty...", 2)
+                input(f"{" " * 5}( Save the game! ) Press enter to abort...")
             curChar = str(L[0])
             initVar(True)
             curStats = eval(L[1])
@@ -233,10 +265,10 @@ def loadG():
             doneTask = bool(L[5])
         return True
     except PermissionError:
-        print("Unable to load game...")
+        G.Cprint("Unable to load game...")
         return False
     except FileNotFoundError:
-        print("File does not exist, start a new game.")
+        G.Cprint("File does not exist, start a new game.")
         return False
     except Exception as e:
         raise e

@@ -1,0 +1,6 @@
+Newbie
+[10, 15]
+[2, 0]
+0
+None
+False

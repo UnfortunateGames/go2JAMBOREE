@@ -1,4 +1,4 @@
-from cmds.__cmds__ import cls, wait
+from cmds.__cmds__ import cls, wait, Cprint
 import backend.__backend__ as BE
 import gui.__gui__ as G
 
@@ -11,10 +11,10 @@ upKB: str = "up"
 rightKB: str = "right"
 downKB: str = "down"
 taskKB: str = "task"
-actKB: str = "acts"
+actsKB: str = "acts"
 checkKB: str = "check"
 askKB: str = "ask"
-waitKB: str = "back"
+waitKB: str = "wait"
 sleepKB: str = "sleep"
 menuKB: str = "menu"
 backKB: str = "back"
@@ -22,13 +22,13 @@ backKB: str = "back"
 hasStartedGame: bool = False
 
 def initDeath() -> None:
-    BE.deaths += 1
     cls()
     wait(2)
     G.printAnim("Your vision starts to fade...", "\n\n\n")
     wait(1)
     cls()
     if BE.checkDeath() == 1:
+        BE.deaths += 1
         BE.curLoc == [2, 0]
         G.printAnim("Nggghh... My wounds...", "\n\n\n")
         wait(1)
@@ -47,10 +47,12 @@ def initDeath() -> None:
         G.printAnim("I'm sorry...", "\n")
         wait(2)
         cls()
-        print(f"\n\n\n{" " * 15}Game over!\n{" " * 14}Try again? :P")
+        print("\n\n")
+        Cprint("Game over!")
+        Cprint("Try again :P")
         G.menuScroll(G.gameOver)
         x = input(f"\n\n\n{" " * 6}< ? ) >> ").lower()
-        if x == "menu" or x == "back":
+        if x == menuKB or x == backKB:
             initMenu()
         elif x == "continue?" or x == "continue":
             BE.initVar()
@@ -73,6 +75,8 @@ def initMove():
         if BE.updTVal() == 1:
             BE.hPlayer("hp", BE.curDrainStats[0])
             BE.hPlayer("stamina", BE.curDrainStats[1])
+        if BE.curStats[0] <= 0 or BE.curStats[1] == 0:
+            initDeath()
         cls()
         G.fLocDisplay()
         print(G.displayStat())
@@ -97,6 +101,26 @@ def initMove():
     G.curMenu = 0
     initDisplay()
 
+def initPunish() -> None:
+    dialogue = ["My creation.", "Why must you ignore me?", "You shalt not disobey.", "You must be punished."]
+    for x in dialogue:
+        cls()
+        G.printAnim(x, "\n\n\n")
+        wait(1)
+    cls()
+    BE.hPlayer("hp", -10)
+    BE.hPlayer("stamina", -10)
+    print(f"{f"{"#" * 40}\n" * 6}")
+    wait(1.5)
+    cls()
+    print(f"{f"{":" * 40}\n" * 6}")
+    wait(1)
+    cls()
+    print(f"{f"{"." * 40}\n" * 6}")
+    wait(0.75)
+    cls()
+    wait(2)
+
 def initAct():
     while True:
         cls()
@@ -109,6 +133,8 @@ def initAct():
             BE.mvGTime(None)
             G.printAnim("You went to sleep...", "\n\n\n")
             wait(2)
+            if BE.doneTask is False:
+                initDisplay()
             cls()
             initDisplay()
         elif x == askKB and BE.curLoc == [0, 1]:
@@ -140,7 +166,7 @@ def initWait() -> None:
     G.fLocDisplay()
     print(G.displayStat())
     while True:
-        x = input(f"\n{" "}For how long? ( 'Back' to exit ) > ")
+        x = int(input(f"\n{" "}For how long? ( 'Back' to exit ) > "))
         if x is not int:
             if x == "back":
                 x = 0
@@ -159,6 +185,8 @@ def initWait() -> None:
 
 def initDisplay() -> None:
     while True:
+        if BE.curStats[0] <= 0 or BE.curStats[1] <= 0:
+            initDeath()
         cls()
         G.fLocDisplay()
         print(G.displayStat())
@@ -175,6 +203,7 @@ def initDisplay() -> None:
                 cls()
                 wait(1)
                 G.printAnim("A few hours later...", "\n\n\n")
+                BE.mvGTime(4)
                 BE.hPlayer("hp", BE.taskList[BE.curTask]["Drain"][0])
                 BE.hPlayer("stamina", BE.taskList[BE.curTask]["Drain"][1])
                 BE.doneTask = True
@@ -212,15 +241,15 @@ def initIntro() -> None:
 def initChChar() -> None:
     global charHead
     cls()
-    heads = [" o ", "<+>"]
+    heads = [" o ", "<+>", "'@'", "(*)"]
     x = 0
     while True:
-        stats = [BE.newbieStats, BE.expertStats]
-        names = ["Newbie", "Expert"]
+        stats = [BE.newbieStats, BE.expertStats, BE.sustainerStats, BE.fallenStats]
+        names = ["Newbie", "Expert", "Sustainer", "Fallen"]
         cls()
         if x < 0:
-            x = 1
-        elif x > 1:
+            x = len(stats) - 1
+        elif x > len(stats) - 1:
             x = 0
         localcharHead = heads[x]
         G.menuScroll(G.fCharMenu(x, localcharHead))
@@ -245,24 +274,24 @@ def initKeyChange() -> None:
     while True:
         cls()
         print(G.logo)
-        G.menuScroll()
+        print(G.fkeyChange())
         x = input(f"\n{" " * 6}< ? ) >> ").lower()
         if x == "left":
-            leftKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            leftKB = input(f"{" " * 5}< Current KB: {leftKB} ) >> ").lower()
         elif x == "up":
-            upKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            upKB = input(f"{" " * 5}< Current KB: {upKB} ) >> ").lower()
         elif x == "right":
-            rightKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            rightKB = input(f"{" " * 5}< Current KB: {rightKB} ) >> ").lower()
         elif x == "down":
-            downKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            downKB = input(f"{" " * 5}< Current KB: {downKB} ) >> ").lower()
         elif x == "task":
-            taskKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            taskKB = input(f"{" " * 5}< Current KB: {taskKB} ) >> ").lower()
         elif x == "act":
-            actsKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            actsKB = input(f"{" " * 5}< Current KB: {actsKB} ) >> ").lower()
         elif x == "check":
-            checkKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            checkKB = input(f"{" " * 5}< Current KB: {checkKB} ) >> ").lower()
         elif x == "ask":
-            askKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            askKB = input(f"{" " * 5}< Current KB: {leftKB} ) >> ").lower()
         elif x == "wait":
             waitKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
         elif x == "sleep":
@@ -271,47 +300,65 @@ def initKeyChange() -> None:
             backKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
         elif x == "menu":
             menuKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
-        if x == backKB:
+        elif x == "exit":
             break
         else:
             input(f"{" " * 5}{x} is not a Keybind!")
     cls()
-    x = input(f"\n\n\n{" "}Save Changes? [Y/n] > ").lower()
+    x = input(f"\n\n\n{" " * 5}Save Changes? [Y/n] > ").lower()
     if x == "n":
         return
     try:
         with open('PyFiles/settings/__settings__.txt', 'w') as F:
-            F.write(f"{leftKB}\n")
-            F.write(f"{upKB}\n")
-            F.write(f"{rightKB}\n")
-            F.write(f"{downKB}\n")
-            F.write(f"{taskKB}\n")
-            F.write(f"{actsKB}\n")
-            F.write(f"{checkKB}\n")
-            F.write(f"{askKB}\n")
-            F.write(f"{waitKB}\n")
-            F.write(f"{sleepKB}\n")
-            F.write(f"{menuKB}\n")
-            F.write(f"{backKB}\n")
+            KBlist = [leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB]
+            for x in KBlist:
+                F.write(f"{x}")
     except PermissionError:
-        print("Unable to save settings... Not saving settings...")
+        Cprint("Unable to save settings...")
+        Cprint("Game is not allowed to write")
     except FileNotFoundError:
-        print("File does not exist, make sure that settings/__settings__.txt exists. Not saving...")
+        Cprint("File doesn't exist.")
+        Cprint("Recreate the settings file in:")
+        Cprint("( PyFiles/settings )")
     except Exception as e:
         raise e
-    wait(1.5)
 
 def initSettings() -> None:
+    global leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB
+    cls()
+    Cprint("Make sure to remember")
+    Cprint("Your Keybinds! UI elements")
+    Cprint("Will not change!")
+    input(f"\n{" " * 6}Press Enter to continue...")
     while True:
         cls()
-        print(G.logo)
         G.menuScroll(G.settingMenu)
         x = input(f"\n{" " * 6}< ? ) >> ").lower()
-        if x == "keybind":
+        if x == "keybind" or x == "keybinds":
             initKeyChange()
+        elif x == "load" or x == "load kbs" or x == "loadkb":
+            try:
+                with open('PyFiles/settings/__settings__.txt', 'r') as F:
+                    L = F.readlines()
+                    KBlist = [leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB]
+                    y = 0
+                    for x in KBlist:
+                        x = L[y]
+                        y += 1
+            except PermissionError:
+                Cprint("Unable to read!", 5)
+                input(f"{" " * 5}Press Enter to continue...")
+            except FileNotFoundError:
+                Cprint("File is deleted or doesn't ecit...")
+                input(f"{" " * 5}Press Enter to continue...")
+            except Exception as e:
+                raise e
         elif x == "save":
             BE.saveG()
-            input(f"\n{" " * 5}Game saved successfully!")
+            if BE.saveG() is True:
+                input(f"\n{" " * 5}Game saved successfully!")
+            elif BE.saveG() is False:
+                input(f"{" " * 5}An error was raised... Press enter to abort... ")
         elif x == "back":
             break
         else:
@@ -355,7 +402,9 @@ def initGame() -> None:
     G.printAnim("ElectricSplash Presents...", "\n\n\n")
     wait(1)
     cls()
-    print("\n\n" + G.logo)
+    BE.curLoc = [1, 0]
+    print(G.logo + "\n")
+    print(G.fLocDisplay())
     wait(2)
     input(f"\n\n{" " * 6}Press Enter to continue... ")
     G.curMenu = 0

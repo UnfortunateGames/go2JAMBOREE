@@ -15,3 +15,8 @@ def rRN(x, y) -> int:
 
 def wait(n) -> None:
     time.sleep(n)
+
+def Cprint(message=str, spaces=None) -> None:
+    if spaces is None:
+        spaces = int(40 - (len(list(message)) / 2))
+    print(spaces + message)
