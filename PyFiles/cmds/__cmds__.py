@@ -18,5 +18,5 @@ def wait(n) -> None:
 
 def Cprint(message=str, spaces=None) -> None:
     if spaces is None:
-        spaces = int(40 - (len(list(message)) / 2))
+        spaces = " " * int((40 - len(list(message))) / 2)
     print(spaces + message)

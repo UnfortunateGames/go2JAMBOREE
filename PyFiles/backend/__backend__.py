@@ -13,21 +13,25 @@ taskList: dict = {
     "list": ["CT", "PM", "DE", "SC"],
     "CT": {
         "name": "Chop Trees.",
+        "dialogues": ["Chop chop for the wood...", "Few barks of wood later"],
         "LocOpt": [0, 0],
         "Drain": [0, -6],
     },
     "PM": {
         "name": "Praise Me.",
+        "dialogues": ["Hallelujah! Rejoice!", "Praise, praise, for our existance!"],
         "LocOpt": [0, 1],
         "Drain": [0, -4],
     },
     "DE": {
         "name": "Don't Eat.",
+        "dialogues": ["Resist gluttony, must resist...", "The food looks more tasty"],
         "LocOpt": [0, 1],
         "Drain": [-3, -5],
     },
     "SC": {
         "name": "Sacrifice.",
+        "dialogue": ["Sacrifice, to all the sins.", "You feel forgiven..."],
         "LocOpt": [0, 1],
         "Drain": [-6, -2],
     }
@@ -80,50 +84,68 @@ locList: dict = {
     }
 }
 
+def eat(food) -> None:
+    if food == "meat":
+        hPlayer("hunger", 4)
+
 itemList: dict = {
     "list": ["Map", "Meat"],
-    "Map": {
-        "desc": "If I ever get lost...",
-        "sprite": None,
-        "specialFunc": 1
-    },
     "Meat": {
         "desc": "Yum...",
         "sprite": None,
-        "specialFunc": 2
-    }
+        "specialFunc": eat("meat")
+    },
+    "Apple": {}
 }
 
 newbieStats: dict = {
+    "head": " o ",
+    "body": "/|\ ",
     "desc": "My first creation.",
-    "max": [10, 15],
-    "drain": [0, -1]
+    "price": 0,
+    "max": [10, 15, 10],
+    "drain": [0, -1, -2]
 }
 
 expertStats: dict = {
+    "head": "<+>",
+    "body": "/|\ ",
     "desc": "Long forgotten.",
-    "max": [20, 25],
-    "drain": [0, -3]
+    "price": 15,
+    "max": [20, 25, 15],
+    "drain": [0, -3, -2]
 }
 
 sustainerStats: dict = {
+    "head": "{@}",
+    "body": "/U\ ",
     "desc": "Gluttony.",
-    "max": [30, 12],
-    "drain": [-2, 0]
+    "price": 20,
+    "max": [20, 12, 20],
+    "drain": [-2, -1, -2]
 }
 
 fallenStats: dict = {
+    "head": "(*)",
+    "body": '"|"',
     "desc": "My angel, I'm sorry.",
-    "max": [15, 1],
-    "drain": [-2, 0]
+    "price": 30,
+    "max": [15, 1, 1],
+    "drain": [-2, 0, 0]
 }
 
-curStats: list = [10, 15]
+charUnlock: list = [True, False, False, False]
 
-curMaxStats: list = [10, 15]
-curDrainStats: list = [0, -2]
+curStats: list = [10, 15, 10]
+
+curMaxStats: list = [10, 15, 10]
+curDrainStats: list = [0, -2, -1]
 
 curChar: str = "Newbie"
+curHead: str = " o "
+curBody: str = "/|\ "
+curBadges: int = 0
+
 curLoc: list = [2, 0]
 curRNG: int = 0
 curTask: str = None
@@ -166,6 +188,11 @@ def hPlayer(stat=None, amount=None) -> None:
             curStats[1] = curMaxStats[1]
         else:
             curStats[1] += amount
+    if stat == "hunger" or stat is None:
+        if amount is None:
+            curStats[2] = curMaxStats[2]
+        else:
+            curStats[2] += amount
 
 def checkDeath() -> int:
     if curStats[0] <= 0:
@@ -189,7 +216,7 @@ def updTVal() -> any:
         elif WTime == "Day":
             WTime = "Night"
             canSleep = True
-        # The Weth variable will be unused until v0.5.0
+        # The Weth variable will be unused until v0.4.0
         return 0
 
 def mvGTime(amount=1) -> None:
@@ -199,7 +226,6 @@ def mvGTime(amount=1) -> None:
         GTime -= 4
         WTime = "Day"
         updTVal()
-        curTask = taskList[taskList["list"][rRN(0, len(taskList["list"]))]]
         heardTask = doneTask = False
         hPlayer()
         return
@@ -210,25 +236,29 @@ def mvGTime(amount=1) -> None:
         hPlayer("hp", curDrainStats[0])
         hPlayer("stamina", curDrainStats[1])
 
-def initVar(onlyPlayer=False) -> None:
-    global curStats, curMaxStats, curDrainStats, curRNG, GTime, doneTask, heardTask, canSleep, canWait
+def updCharVal() -> None:
+    global curStats, curMaxStats, curDrainStats, curHead, curBody
     if curChar == "Newbie":
         char = newbieStats
     elif curChar == "Expert":
         char = expertStats
-    for x in range(0, 1):
+    for x in range(0, 2):
         curMaxStats[x] = char["max"][x]
         curDrainStats[x] = char["drain"][x]
         curStats[x] = curMaxStats[x]
-    if onlyPlayer:
-        return
+    curHead = char["head"]
+    curBody = char["body"]
+
+def initVar() -> None:
+    global curRNG, curTask, GTime, doneTask, heardTask, canSleep, canWait
     canSleep = doneTask = heardTask = False
     canWait = True
     curRNG = rRN(0, 3)
+    curTask = taskList["list"][rRN(0, len(taskList["list"]))]
     GTime = 0
     updTVal()
 
-def saveG():
+def saveG() -> None:
     try:
         with open('PyFiles/backend/saveFile/__save__.txt', 'w') as F:
             L = [curChar, curStats, curLoc, curRNG, curTask, doneTask]
@@ -247,7 +277,7 @@ def saveG():
     except Exception as e:
         raise e
 
-def loadG():
+def loadG() -> None:
     global curChar, curStats, curLoc, curRNG, curTask, doneTask, heardTask
     heardTask = False
     try:

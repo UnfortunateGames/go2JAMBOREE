@@ -48,8 +48,6 @@ def initDeath() -> None:
         wait(2)
         cls()
         print("\n\n")
-        Cprint("Game over!")
-        Cprint("Try again :P")
         G.menuScroll(G.gameOver)
         x = input(f"\n\n\n{" " * 6}< ? ) >> ").lower()
         if x == menuKB or x == backKB:
@@ -68,14 +66,14 @@ def initDeath() -> None:
     wait(2)
     initDisplay()
 
-def initMove():
+def initMove() -> None:
     while True:
         BE.mvGTime()
         BE.updTVal()
         if BE.updTVal() == 1:
             BE.hPlayer("hp", BE.curDrainStats[0])
             BE.hPlayer("stamina", BE.curDrainStats[1])
-        if BE.curStats[0] <= 0 or BE.curStats[1] == 0:
+        if BE.checkDeath() > 0:
             initDeath()
         cls()
         G.fLocDisplay()
@@ -84,22 +82,21 @@ def initMove():
         x = input(f"{" " * 5}< ! ? ) >> ").lower()
         if x == leftKB and G.checkAct("l") is True:
             BE.curLoc[0] -= 1
-            # animation soon!
+            G.moveAnim()
         elif x == upKB and G.checkAct("u") is True:
             BE.curLoc[1] -= 1
-            # animations soon!
+            G.moveAnim()
         elif x == rightKB and G.checkAct("r") is True:
             BE.curLoc[0] += 1
-            # animations soon!
+            G.moveAnim()
         elif x == downKB and G.checkAct("d") is True:
             BE.curLoc[1] += 1
-            # animations soon!
+            G.moveAnim()
         elif x == backKB:
             break
         else:
             input(f"\n{" " * 6}I'm not allowed to go there!")
     G.curMenu = 0
-    initDisplay()
 
 def initPunish() -> None:
     dialogue = ["My creation.", "Why must you ignore me?", "You shalt not disobey.", "You must be punished."]
@@ -121,7 +118,7 @@ def initPunish() -> None:
     cls()
     wait(2)
 
-def initAct():
+def initAct() -> None:
     while True:
         cls()
         G.fLocDisplay()
@@ -131,14 +128,12 @@ def initAct():
         if x == sleepKB and BE.curLoc == [1, 0] and BE.canSleep is True:
             cls()
             BE.mvGTime(None)
-            G.printAnim("You went to sleep...", "\n\n\n")
+            G.fRandomDialogue("sleep")
             wait(2)
             if BE.doneTask is False:
-                initDisplay()
-            cls()
-            initDisplay()
+                initPunish()
+            break
         elif x == askKB and BE.curLoc == [0, 1]:
-            BE.curTask = BE.taskList["list"][BE.curRNG]
             for x in G.fTaskDialogue():
                 cls()
                 G.fLocDisplay()
@@ -156,36 +151,33 @@ def initAct():
         else:
             input(f"\n{" " * 6}I'm not allowed to do that here!")
     G.curMenu = 0
-    initDisplay()
 
 def initWait() -> None:
     if BE.canWait is False:
         input(f"{" " * 5}I'm tired of waiting...")
         return
-    cls()
-    G.fLocDisplay()
-    print(G.displayStat())
+    elif BE.WTime == "Night":
+        input(f"{" " * 5}I would rather sleep than wait...")
+        return
     while True:
-        x = int(input(f"\n{" "}For how long? ( 'Back' to exit ) > "))
-        if x is not int:
-            if x == "back":
-                x = 0
-                break
-            input(f"\n{" " * 5}That's not a number...")
-        else:
-            BE.canWait = False
-            break
-    BE.mvGTime(x)
-    if x != 0:
         cls()
-        G.printAnim("A few hours of waiting...", "\n\n\n")
+        G.fLocDisplay()
+        print(G.displayStat())
+        x = input(f"\n{" " * 6}Wait for night? [Y/n] > ").lower()
+        if x == "n":
+            break
+        BE.GTime = 2
+        BE.WTime = "Night"
+        BE.updTVal()
+        cls()
+        wait(2)
+        G.fRandomDialogue("wait", "\n\n\n")
         wait(1)
-    G.curMenu = 0
-    initDisplay()
+        break
 
 def initDisplay() -> None:
     while True:
-        if BE.curStats[0] <= 0 or BE.curStats[1] <= 0:
+        if BE.checkDeath() > 0:
             initDeath()
         cls()
         G.fLocDisplay()
@@ -202,7 +194,7 @@ def initDisplay() -> None:
             if G.checkAct("do") is True:
                 cls()
                 wait(1)
-                G.printAnim("A few hours later...", "\n\n\n")
+                G.fRandomDialogue("task")
                 BE.mvGTime(4)
                 BE.hPlayer("hp", BE.taskList[BE.curTask]["Drain"][0])
                 BE.hPlayer("stamina", BE.taskList[BE.curTask]["Drain"][1])
@@ -219,7 +211,6 @@ def initDisplay() -> None:
             break
         else:
             input(f"\n{" " * 6}{x}? I can't do that...")
-    initMenu()
 
 def initIntro() -> None:
     dialogue1 = ["Hello.", "Are you here?", "Good.", "Open your eyes."]
@@ -241,7 +232,6 @@ def initIntro() -> None:
 def initChChar() -> None:
     global charHead
     cls()
-    heads = [" o ", "<+>", "'@'", "(*)"]
     x = 0
     while True:
         stats = [BE.newbieStats, BE.expertStats, BE.sustainerStats, BE.fallenStats]
@@ -251,18 +241,22 @@ def initChChar() -> None:
             x = len(stats) - 1
         elif x > len(stats) - 1:
             x = 0
-        localcharHead = heads[x]
-        G.menuScroll(G.fCharMenu(x, localcharHead))
+        G.fCharMenu(x)
         y = input(f"\n\n{" " * 5}< \o/ ) >> ").lower()
         if y == "left":
             x -= 1
         elif y == "right":
             x += 1
+        elif y == "get":
+            pass
         elif y == "equip":
-            for y in range(0, 1):
-                BE.curMaxStats[y] = stats[x]["max"][y]
-                BE.curDrainStats[y] = stats[x]["drain"][y]
-            input(f"{" " * 5}You have chosen {names[x]}!")
+            if BE.charUnlocks[x] is True:
+                for y in range(0, 1):
+                    BE.curMaxStats[y] = stats[x]["max"][y]
+                    BE.curDrainStats[y] = stats[x]["drain"][y]
+                input(f"{" " * 5}You have chosen {names[x]}!")
+            else:
+                input(f"{" " * 5}Buy the character first!")
         elif y == backKB:
             break
         else:
@@ -411,4 +405,6 @@ def initGame() -> None:
     initMenu()
 
 if __name__ == "__main__":
-    initGame()
+    # initGame()
+    BE.deaths = 3
+    initDeath()

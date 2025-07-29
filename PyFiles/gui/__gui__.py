@@ -1,4 +1,4 @@
-from cmds.__cmds__ import wait
+from cmds.__cmds__ import wait, rRN, cls
 import backend.__backend__ as BE
 
 # Might go insane over creating sprites
@@ -59,7 +59,7 @@ def factionActs() -> str:
        ( Sleep )==============[ {"!" if BE.curLoc == [1, 0] and BE.canSleep is True else " "} ]
        ( Check )==============[ ! ]
        (  Ask  )==============[ {"!" if BE.curLoc == [0, 1] else " "} ]
-       (Collect)==============[ {"!" if BE.curLoc == [0, 0] or BE.curLoc == [2, 1] else " "} ]
+       (  Get  )==============[ {"!" if BE.curLoc == [0, 0] or BE.curLoc == [2, 1] else " "} ]
 
     < 'Back' to Main Options
 """
@@ -227,13 +227,6 @@ DcheckSprite: str = """
 ::::::::::::::::::::::::::::::::::::::::
 """
 
-mapSprite: str = """
-   /'--''-''''-'/
-  / X--.^.'-. <'
- .>^ -:.' 7 O/
-/__.___...._/
-"""
-
 locSprites: dict = {
     0: [FESpr, CaSpr, SpSpr, Cl0Spr],
     1: [AlSpr, SLSpr, [Pl0Spr, Pl1Spr], Cl1Spr]
@@ -246,7 +239,6 @@ def fcheckSprite() -> str:
         return DcheckSprite
     elif BE.WTime == "Night":
         return NcheckSprite
-
 
 def fLocDisplay(returnSprite=False) -> None or str:
     sky = daySky if BE.WTime == "Day" else nightSky
@@ -261,22 +253,35 @@ def fLocDisplay(returnSprite=False) -> None or str:
         return Sprite
     print(Sprite)
 
-def fCharMenu(x, y) -> str:
-    charlist = [BE.newbieStats["max"], BE.expertStats["max"], BE.sustainerStats["max"], BE.fallenStats["max"]]
-    desclist = [BE.newbieStats["desc"], BE.expertStats["desc"], BE.sustainerStats["desc"], BE.fallenStats["desc"]]
+def fCharMenu(x) -> str:
+    charlist = [BE.newbieStats, BE.expertStats, BE.sustainerStats, BE.fallenStats]
     char = charlist[x]
-    Stats = [0, 1]
-    Stats[0] = char[0]
-    Stats[1] = char[1]
-    desc = desclist[x]
-    return f"""
-          < Left    |    Right >
-           Health: {y}
-            > {Stats[0]}   /|\  Stamina:
-                   / \  > {Stats[1]}
-         "{desc}"
-        < 'Back' to Main Menu
+    charHead = char["head"]
+    charBody = char["body"]
+    charPrice = char["price"]
+    desc = char["desc"]
+    if BE.charUnlock[x] is False:
+        equip = f"{charPrice} Badges > Get"
+    elif BE.charUnlock[x] is True:
+        equip = "Unlocked! > Equip"
+    else:
+        equip = "Error!"
+    Sprite = f"""
+     _0_                        _0_
+     | |~~~~~~~~~~~~~~~~~~~~~~~~| |
+
+           Choose a Charcter:
+           < Left  ][ Right >
+          -> "{desc}"
+           {charHead}  Health  : {char[0]}
+           {charBody} Stamina : {char[1]}
+           / \  {equip}
+          << 'Back' to Main Menu
+    
+    |_|~~~~~~~~~~~~~~~~~~~~~~~~~|_|
+     0                           0
 """
+    print(Sprite)
 
 def fTaskDialogue() -> list:
     if BE.doneTask is True:
@@ -285,12 +290,12 @@ def fTaskDialogue() -> list:
         return ["You came back.", f"Your task is {BE.taskList[BE.curTask]["name"]}", "Carry on."]
     return ["Did you forget?", f"I ordered you to {BE.taskList[BE.curTask]["name"]}"]
 
-def printAnim(m=str, before=str) -> None:
+def printAnim(m=str, before="") -> None:
     L = list(m)
     x = 3 / (len(L) * len(L))
     y = x
     b = " " * int((40 - len(L)) / 2)
-    print(before + b, end="", flush=True)
+    print(f"{before}{b}", end="", flush=True)
     for n in L:
         print(n, end="", flush=True)
         wait(y)
@@ -324,3 +329,35 @@ def menuScroll(menu=str) -> None:
     print(menu)
     print(f"{" " * 6}|_|{"~" * 22}|_|")
     print(f"{" " * 6} 0{" " * 24}0")
+
+def fRandomDialogue(dialogue) -> None:
+    if dialogue == "task":
+        dial = BE.taskList[BE.curTask]["dialogue"][rRN(0, 1)]
+    elif dialogue == "sleep":
+        x = ["Oh sweet relief of sleep...", "Tiring day isn't it?"]
+        dial = x[rRN(0, 1)]
+    elif dialogue == "wait":
+        x = ["Hmmmm... Zen...", "The sun's setting..."]
+        dial = x[rRN(0, 1)]
+    printAnim(dial)
+
+def taskAnim() -> None:
+    pass
+
+def moveAnim() -> None:
+    anim = ["/ \ ", "/<", "<|"]
+    dots = 0
+    for x in range(0, 21):
+        cls()
+        y = x % 3
+        z = x % 7
+        if z == 0:
+            dots += 1
+        print(f"\n\n{" " * 11}_0_{" " * 11}_0_")
+        print(f"{" " * 11}| |{"~" * 11}| |\n")
+        print(f"{" "* 18}{BE.curHead}\n{" " * 18}{BE.curBody}")
+        print(" " * 18 + anim[y])
+        print(f"{" " * 15}Moving{"." * dots}\n")
+        print(f"{" " * 11}|_|{"~" * 11}|_|")
+        print(f"{" " * 12}0{" " * 13}0")
+        wait(0.2)
