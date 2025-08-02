@@ -13,7 +13,7 @@ taskList: dict = {
     "list": ["CT", "PM", "DE", "SC"],
     "CT": {
         "name": "Chop Trees.",
-        "dialogues": ["Chop chop for the wood...", "Few barks of wood later"],
+        "dialogues": ["Chop chop for the wood...", "Few barks of wood later..."],
         "LocOpt": [0, 0],
         "Drain": [0, -6],
     },
@@ -25,15 +25,21 @@ taskList: dict = {
     },
     "DE": {
         "name": "Don't Eat.",
-        "dialogues": ["Resist gluttony, must resist...", "The food looks more tasty"],
-        "LocOpt": [0, 1],
+        "dialogues": ["Resist gluttony, must resist...", "The food looks more tasty..."],
+        "LocOpt": [2, 1],
         "Drain": [-3, -5],
     },
     "SC": {
         "name": "Sacrifice.",
-        "dialogue": ["Sacrifice, to all the sins.", "You feel forgiven..."],
-        "LocOpt": [0, 1],
+        "dialogues": ["Sacrifice, to all the sins.", "You feel forgiven..."],
+        "LocOpt": [3, 0],
         "Drain": [-6, -2],
+    },
+    "BT": {
+        "name": "Baptism.",
+        "dialogues": ["Your sins were forgotten.", "Evil Nostalgia."],
+        "LocOpt": [1, 1],
+        "Drain": [0, -4]
     }
 }
 
@@ -84,18 +90,22 @@ locList: dict = {
     }
 }
 
-def eat(food) -> None:
-    if food == "meat":
-        hPlayer("hunger", 4)
-
 itemList: dict = {
-    "list": ["Map", "Meat"],
     "Meat": {
         "desc": "Yum...",
         "sprite": None,
-        "specialFunc": eat("meat")
+        "heal": [0, 2, 6]
     },
-    "Apple": {}
+    "Apple": {
+        "desc": "Eat healthy!",
+        "sprite": None,
+        "heal": [2, 1, 3]
+    },
+    "Water": {
+        "desc": "Thirsty...",
+        "sprite": None,
+        "heal": [1, 5, 0]
+    }
 }
 
 newbieStats: dict = {
@@ -127,7 +137,7 @@ sustainerStats: dict = {
 
 fallenStats: dict = {
     "head": "(*)",
-    "body": '"|"',
+    "body": '"|" ',
     "desc": "My angel, I'm sorry.",
     "price": 30,
     "max": [15, 1, 1],
@@ -142,8 +152,6 @@ curMaxStats: list = [10, 15, 10]
 curDrainStats: list = [0, -2, -1]
 
 curChar: str = "Newbie"
-curHead: str = " o "
-curBody: str = "/|\ "
 curBadges: int = 0
 
 curLoc: list = [2, 0]
@@ -151,8 +159,8 @@ curRNG: int = 0
 curTask: str = None
 inventory: dict = {
     "Meat": 0,
-    "Apples": 0,
-    "Map": 1
+    "Fruit": 0,
+    "Water": 0
 }
 
 GTime: int = 0
@@ -166,9 +174,10 @@ doneTask: bool = False
 canWait: bool = True
 
 deaths: int = 0
+IsThereAnimal: bool = False
 
 def checkTask(n=int) -> bool:
-    task = taskList[taskList["list"][curRNG]]
+    task = taskList[curTask]
     if n == 1 and curTask != "CT":
         return False
     elif heardTask is False or doneTask is True:
@@ -250,11 +259,12 @@ def updCharVal() -> None:
     curBody = char["body"]
 
 def initVar() -> None:
-    global curRNG, curTask, GTime, doneTask, heardTask, canSleep, canWait
+    global curRNG, curTask, GTime, doneTask, heardTask, canSleep, canWait, IsThereAnimal
+    IsThereAnimal = PLanimalChance()
     canSleep = doneTask = heardTask = False
     canWait = True
     curRNG = rRN(0, 3)
-    curTask = taskList["list"][rRN(0, len(taskList["list"]))]
+    curTask = taskList["list"][rRN(0, len(taskList["list"]) - 1)]
     GTime = 0
     updTVal()
 

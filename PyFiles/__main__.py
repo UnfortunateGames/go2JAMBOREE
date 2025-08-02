@@ -53,6 +53,7 @@ def initDeath() -> None:
         if x == menuKB or x == backKB:
             initMenu()
         elif x == "continue?" or x == "continue":
+            BE.updCharVal()
             BE.initVar()
             initIntro()
     BE.hPlayer()
@@ -175,6 +176,9 @@ def initWait() -> None:
         wait(1)
         break
 
+def initInventory() -> None:
+    pass
+
 def initDisplay() -> None:
     while True:
         if BE.checkDeath() > 0:
@@ -194,7 +198,7 @@ def initDisplay() -> None:
             if G.checkAct("do") is True:
                 cls()
                 wait(1)
-                G.fRandomDialogue("task")
+                G.taskAnim()
                 BE.mvGTime(4)
                 BE.hPlayer("hp", BE.taskList[BE.curTask]["Drain"][0])
                 BE.hPlayer("stamina", BE.taskList[BE.curTask]["Drain"][1])
@@ -207,6 +211,8 @@ def initDisplay() -> None:
         elif x == waitKB:
             G.curMenu = 3
             initWait()
+        elif x == "inventory":
+            initInventory()
         elif x == menuKB:
             break
         else:
@@ -361,34 +367,34 @@ def initSettings() -> None:
 
 def initMenu() -> None:
     global hasStartedGame
-    cls()
-    G.menuScroll(G.mainMenu)
-    x = input(f"\n\n{" " * 5}< ) >> ").lower()
-    if x == "continue":
-        BE.loadG()
-        if hasStartedGame is False:
-            hasStartedGame = True
-            cls()
-            G.printAnim(G.fLocDisplay(True))
-            wait(1)
-        initDisplay()
-    elif x == "new game" or x == "new":
-        BE.initVar()
-        BE.curLoc = [2, 0]
-        initIntro()
-    elif x == "settings" or x == "setting":
-        initSettings()
-    elif x == "characters" or x == "character":
-        initChChar()
-    elif x == "credits" or x == "credit":
+    while True:
         cls()
-        G.menuScroll(G.creditMenu)
-        input(f"\n\n{" " * 6}Press Enter to continue...")
-        initMenu()
-    elif x == "exit":
-        exit()
-    input(f"\n{" " * 10}{x} is not a valid command! ")
-    initMenu()
+        G.menuScroll(G.mainMenu)
+        x = input(f"\n\n{" " * 5}< ) >> ").lower()
+        if x == "continue":
+            BE.loadG()
+            if hasStartedGame is False:
+                hasStartedGame = True
+                cls()
+                G.printAnim(G.fLocDisplay(True))
+                wait(1)
+            initDisplay()
+        elif x == "new game" or x == "new":
+            BE.updCharVal()
+            BE.initVar()
+            BE.curLoc = [2, 0]
+            initIntro()
+        elif x == "settings" or x == "setting":
+            initSettings()
+        elif x == "characters" or x == "character":
+            initChChar()
+        elif x == "credits" or x == "credit":
+            cls()
+            G.menuScroll(G.creditMenu)
+            input(f"\n\n{" " * 6}Press Enter to continue...")
+        elif x == "exit":
+            break
+        input(f"\n{" " * 10}{x} is not a valid command! ")
 
 def initGame() -> None:
     cls()
@@ -405,6 +411,4 @@ def initGame() -> None:
     initMenu()
 
 if __name__ == "__main__":
-    # initGame()
-    BE.deaths = 3
-    initDeath()
+    initGame()

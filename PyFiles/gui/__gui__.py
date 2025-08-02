@@ -38,7 +38,7 @@ def fmainActs() -> str:
        (  Acts  )=============[ {"!" if BE.curLoc == [0, 1] or BE.curLoc == [1, 0]else " "} ]
        (  Task  )=============[ {"!" if BE.checkTask() is True else " "} ]
        (  Wait  )=============[ {"!" if BE.canWait is True else " "} ]
-    
+                [ 'Inventory' ] >>
     << 'Menu' to Main Menu
 """
 
@@ -53,13 +53,23 @@ def fmoveActs() -> str:
     < 'Back' to Main Options
 """
 
+def canCollect() -> int:
+    if BE.curLoc == [0, 0]:
+        return 1
+    elif BE.curLoc == [1, 1]:
+        return 2
+    elif BE.curLoc == [2, 1]:
+        if BE.IsThereAnimal is True:
+            return 3
+    return 0
+
 def factionActs() -> str:
     return f"""
      What do I do? :
        ( Sleep )==============[ {"!" if BE.curLoc == [1, 0] and BE.canSleep is True else " "} ]
        ( Check )==============[ ! ]
        (  Ask  )==============[ {"!" if BE.curLoc == [0, 1] else " "} ]
-       (  Get  )==============[ {"!" if BE.curLoc == [0, 0] or BE.curLoc == [2, 1] else " "} ]
+       (  Get  )==============[ {"!" if canCollect() > 0 else " "} ]
 
     < 'Back' to Main Options
 """
@@ -227,6 +237,139 @@ DcheckSprite: str = """
 ::::::::::::::::::::::::::::::::::::::::
 """
 
+curHead: str = " o "
+curBody: str = "/|\ "
+
+head = list(curHead)
+body = list(curBody)
+
+def fCTAnim() -> str:
+    return [
+            f"""
+{" " * 16} /\
+{" " * 16}/  (>{curHead}
+{" " * 16}/  \|{curBody}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16} /\ (>
+{" " * 16}/  \/{curHead}
+{" " * 16}/  \ \{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16} /\  --v
+{" " * 16}/  \ /{head[1] + head[2]}
+{" " * 16}/  \  {body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16}   ,--.
+{" " * 16}/ .\ {curHead}
+{" " * 16}/ ^--/{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+
+{" " * 16}/(>\ {curHead}
+{" " * 16}/  '.-{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+
+{" " * 16}/  (>{curHead}
+{" " * 16}/  \|{curBody}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16}    (>
+{" " * 16}/  \/{curHead}
+{" " * 16}/  \ \{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16}     --v
+{" " * 16}/  \ /{head[1] + head[2]}
+{" " * 16}/  \  {body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16}   ,--.
+{" " * 16}  .  {curHead}
+{" " * 16}/ ^--/{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+
+{" " * 16} (>  {curHead}
+{" " * 16}/  '.-{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+
+{" " * 16}   (>{curHead}
+{" " * 16}/  \|{curBody}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16}    (>
+{" " * 16}    /{curHead}
+{" " * 16}/  \ \{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16}     --v
+{" " * 16}     /{head[1] + head[2]}
+{" " * 16}/  \  {body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16}   ,--.
+{" " * 16}  .  {curHead}
+{" " * 16}  ^--/{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+
+{" " * 16} (>  {curHead}
+{" " * 16}   '.-{body[1] + body[2]}
+{" " * 16} ||  / \ 
+""",
+            f"""
+{" " * 16}   (>{curHead}
+{" " * 16}    |{curBody}
+{" " * 16} ||  / \ 
+"""
+    ]
+
+def fPMAnim() -> str:
+    return [
+    """
+Hello World!
+"""
+    ]
+
+def fDEAnim() -> str:
+    return [
+    """ 
+Hello World!
+"""
+    ]
+
+def fSCAnim() -> str:
+    return [
+    """
+Hello World!
+"""
+    ]
+
+def fBTAnim() -> str:
+    return [
+    """
+Hello World!
+"""
+    ]
+
 locSprites: dict = {
     0: [FESpr, CaSpr, SpSpr, Cl0Spr],
     1: [AlSpr, SLSpr, [Pl0Spr, Pl1Spr], Cl1Spr]
@@ -244,9 +387,9 @@ def fLocDisplay(returnSprite=False) -> None or str:
     sky = daySky if BE.WTime == "Day" else nightSky
     loc = locSprites[BE.curLoc[1]][BE.curLoc[0]]
     if BE.curLoc == [2, 1]:
-        if BE.PLanimalChance is True:
+        if BE.IsThereAnimal is True:
             loc = loc[1]
-        elif BE.PLanimalChance is False:
+        elif BE.IsThereAnimal is False:
             loc = loc[0]
     Sprite = sky + loc
     if returnSprite is True:
@@ -256,7 +399,7 @@ def fLocDisplay(returnSprite=False) -> None or str:
 def fCharMenu(x) -> str:
     charlist = [BE.newbieStats, BE.expertStats, BE.sustainerStats, BE.fallenStats]
     char = charlist[x]
-    charHead = char["head"]
+    charHead = char["body"]
     charBody = char["body"]
     charPrice = char["price"]
     desc = char["desc"]
@@ -282,6 +425,17 @@ def fCharMenu(x) -> str:
      0                           0
 """
     print(Sprite)
+
+def fInventoryMenu() -> str:
+    return f"""
+     Inventory:
+
+       [ Meat  ]===============[ {BE.inventory["Meat"]} ]
+       [ Fruit ]===============[ {BE.inventory["Fruit"]} ]
+       [ Water ]===============[ {BE.inventory["Water"]} ]
+
+    << 'Back' to main menu
+"""
 
 def fTaskDialogue() -> list:
     if BE.doneTask is True:
@@ -310,12 +464,12 @@ def displayStat() -> str:
         hpgap = " "
     if BE.curStats[1] < 10:
         staminagap = " "
-    return f""".'..o..| Health  : {hpgap}{BE.curStats[0]} |..//_Electric..'.
-|::/|\:| Stamina : {staminagap}{BE.curStats[1]} |:/_ /-Splash-:::|
+    return f""".'.{curHead}.| Health  : {hpgap}{BE.curStats[0]} |..//_Electric..'.
+|::{curBody}:| Stamina : {staminagap}{BE.curStats[1]} |:/_ /-Splash-:::|
 '.==HP==[{"#"*HPamnt}{noBar}]==|==//===========.'"""
 
 def actScroll() -> None:
-    menus = [fmainActs(), fmoveActs(), factionActs()]
+    menus = [fmainActs(), fmoveActs(), factionActs(), fInventoryMenu()]
     print(f"_0_{" " * 34}_0_")
     print(f"| |{"~" * 34}| |")
     print(menus[curMenu])
@@ -330,34 +484,54 @@ def menuScroll(menu=str) -> None:
     print(f"{" " * 6}|_|{"~" * 22}|_|")
     print(f"{" " * 6} 0{" " * 24}0")
 
-def fRandomDialogue(dialogue) -> None:
+def fRandomDialogue(dialogue, before) -> None:
     if dialogue == "task":
-        dial = BE.taskList[BE.curTask]["dialogue"][rRN(0, 1)]
+        dial = BE.taskList[BE.curTask]["dialogues"][rRN(0, 1)]
     elif dialogue == "sleep":
         x = ["Oh sweet relief of sleep...", "Tiring day isn't it?"]
         dial = x[rRN(0, 1)]
     elif dialogue == "wait":
         x = ["Hmmmm... Zen...", "The sun's setting..."]
         dial = x[rRN(0, 1)]
-    printAnim(dial)
+    printAnim(dial, before)
 
 def taskAnim() -> None:
-    pass
+    if BE.curTask == "CT":
+        anim = fCTAnim()
+    elif BE.curTask == "PM":
+        anim = fCTAnim()
+    elif BE.curTask == "DE":
+        anim = fCTAnim()
+    elif BE.curTask == "SC":
+        anim = fCTAnim()
+    elif BE.curTask == "BT":
+        anim = fCTAnim()
+    for x in range(0, 16):
+        cls()
+        print(f"\n\n{" " * 11}_0_{" " * 11}_0_")
+        print(f"{" " * 11}| |{"~" * 11}| |\n")
+        print(anim[x])
+        print(f"{" " * 11}|_|{"~" * 11}|_|")
+        print(f"{" " * 12}0{" " * 13}0")
+        wait(0.2)
+    print("\n\n")
+    fRandomDialogue("task", "\n\n")
+    wait(2)
 
 def moveAnim() -> None:
     anim = ["/ \ ", "/<", "<|"]
     dots = 0
-    for x in range(0, 21):
+    for x in range(0, 15):
         cls()
         y = x % 3
-        z = x % 7
+        z = x % 5
         if z == 0:
             dots += 1
         print(f"\n\n{" " * 11}_0_{" " * 11}_0_")
         print(f"{" " * 11}| |{"~" * 11}| |\n")
-        print(f"{" "* 18}{BE.curHead}\n{" " * 18}{BE.curBody}")
+        print(f"{" "* 18}{curHead}\n{" " * 18}{curBody}")
         print(" " * 18 + anim[y])
-        print(f"{" " * 15}Moving{"." * dots}\n")
+        print(f"{" " * 16}Moving{"." * dots}\n")
         print(f"{" " * 11}|_|{"~" * 11}|_|")
         print(f"{" " * 12}0{" " * 13}0")
-        wait(0.2)
+        wait(0.15)
