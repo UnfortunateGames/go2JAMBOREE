@@ -43,6 +43,8 @@ taskList: dict = {
     }
 }
 
+# ? Should probably rework this by v0.3.0
+
 locList: dict = {
     "list": {
         0: ["FE", "Ca", "Sp", "Cl0"],
@@ -135,6 +137,7 @@ sustainerStats: dict = {
     "drain": [-2, -1, -2]
 }
 
+# ! Make Fallen Unobtainable
 fallenStats: dict = {
     "head": "(*)",
     "body": '"|" ',
@@ -152,6 +155,7 @@ curMaxStats: list = [10, 15, 10]
 curDrainStats: list = [0, -2, -1]
 
 curChar: str = "Newbie"
+# ! Badges are unobtainable
 curBadges: int = 0
 
 curLoc: list = [2, 0]
@@ -203,6 +207,7 @@ def hPlayer(stat=None, amount=None) -> None:
         else:
             curStats[2] += amount
 
+# ! Optimize this
 def checkDeath() -> int:
     if curStats[0] <= 0:
         return 1
@@ -225,7 +230,7 @@ def updTVal() -> any:
         elif WTime == "Day":
             WTime = "Night"
             canSleep = True
-        # The Weth variable will be unused until v0.4.0
+        # ! The Weth variable will be unused until v0.4.0
         return 0
 
 def mvGTime(amount=1) -> None:

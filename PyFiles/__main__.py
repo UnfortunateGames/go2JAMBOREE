@@ -18,6 +18,7 @@ waitKB: str = "wait"
 sleepKB: str = "sleep"
 menuKB: str = "menu"
 backKB: str = "back"
+inventoryKB: str = "inventory"
 
 hasStartedGame: bool = False
 
@@ -105,17 +106,16 @@ def initPunish() -> None:
         cls()
         G.printAnim(x, "\n\n\n")
         wait(1)
-    cls()
     BE.hPlayer("hp", -10)
     BE.hPlayer("stamina", -10)
-    print(f"{f"{"#" * 40}\n" * 6}")
-    wait(1.5)
-    cls()
-    print(f"{f"{":" * 40}\n" * 6}")
-    wait(1)
-    cls()
-    print(f"{f"{"." * 40}\n" * 6}")
-    wait(0.75)
+    for x in range(0, 2):
+        dur = 1.5
+        letters = ["#", ":", "."]
+        for y in letters:
+            cls()
+            print(f"{f"{y * 40}\n" * 6}")
+            wait(dur)
+        dur -= 0.5
     cls()
     wait(2)
 
@@ -177,7 +177,8 @@ def initWait() -> None:
         break
 
 def initInventory() -> None:
-    pass
+    while True:
+        pass
 
 def initDisplay() -> None:
     while True:
@@ -211,7 +212,8 @@ def initDisplay() -> None:
         elif x == waitKB:
             G.curMenu = 3
             initWait()
-        elif x == "inventory":
+        elif x == inventoryKB:
+            G.curMenu = 4
             initInventory()
         elif x == menuKB:
             break
@@ -380,6 +382,7 @@ def initMenu() -> None:
                 wait(1)
             initDisplay()
         elif x == "new game" or x == "new":
+            hasStartedGame = True
             BE.updCharVal()
             BE.initVar()
             BE.curLoc = [2, 0]
