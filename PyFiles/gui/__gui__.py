@@ -56,9 +56,9 @@ def fmoveActs() -> str:
 def canCollect() -> int:
     if BE.curLoc == [0, 0]:
         return 1
-    elif BE.curLoc == [1, 1]:
-        return 2
     elif BE.curLoc == [2, 1]:
+        return 2
+    elif BE.curLoc == [1, 1]:
         if BE.IsThereAnimal is True:
             return 3
     return 0
@@ -122,27 +122,42 @@ settingMenu: str = """
           < 'Back' to Main Menu
 """
 
-def fkeyChange() -> str:
-    return """
- _0_                                _0_
- | |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~| |
+def fKeyCh() -> str:
+    if BE.curMenu == 0:
+        return  """
+           KeyBinds:
+            ( Move KBs )
+            > [ Left  ] 
+            > [  Up   ]
+            > [ Right ]
+            > [ Down  ]
 
-     Key-Binds:
-      [ MOVE KBs ]  |  [ ACTS KBs ]
-      > ( Left  )   |  > (  Act  )
-      > (  Up   )   |  > (  Ask  )
-      > ( Right )   |  > ( Check )
-      > ( Down  )   |  > ( Sleep )
-                    |
-      [ MISC KBs ]  | [ More Soon! ]
-      > (  Bag  )   |   //_Electric       
-      > ( Tasks )   |  /_ /-Splash-
-      > ( Back  )   |   //=========
-      > ( Menu  )   |  [ :D :P :) ]
-   << 'Exit' to exit this menu
 
- |_|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|_|
-  0                                  0
+          < 'Exit' to Menu
+"""
+    elif BE.curMenu == 1:
+        return """
+           KeyBinds:
+            ( Acts KBs )
+            > [  Act  ]
+            > [  Ask  ]
+            > [ Check ]
+            > [ Sleep ]
+            > [  Get  ]
+
+          < 'Exit' to Menu
+"""
+    elif BE.curMenu == 2:
+        return """
+           KeyBinds:
+            ( Misc KBs )
+            > [  Bag  ]
+            > [ Tasks ]
+            > [ Back  ]
+            > [ Menu  ]
+
+           < 'L'  |  'R' >
+          < 'Exit' to Menu
 """
 
 nightSky: str = """
@@ -563,7 +578,7 @@ def displayStat() -> str:
 '.==HP==[{"#"*HPamnt}{noBar}]==|==//===========.'"""
 
 def actScroll() -> None:
-    menus = [fmainActs(), fmoveActs(), factionActs(), fInventoryMenu(), fInventoryMenu()]
+    menus = [fmainActs(), fmoveActs(), factionActs(), fInventoryMenu()]
     print(f"_0_{" " * 34}_0_")
     print(f"| |{"~" * 34}| |")
     print(menus[curMenu])

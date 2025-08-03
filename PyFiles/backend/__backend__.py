@@ -14,32 +14,44 @@ taskList: dict = {
     "CT": {
         "name": "Chop Trees.",
         "dialogues": ["Chop chop for the wood...", "Few barks of wood later..."],
+        "prize": 2,
         "LocOpt": [0, 0],
-        "Drain": [0, -6],
+        "Drain": [0, -6, -3],
     },
     "PM": {
         "name": "Praise Me.",
         "dialogues": ["Hallelujah! Rejoice!", "Praise, praise, for our existance!"],
+        "prize": 1,
         "LocOpt": [0, 1],
-        "Drain": [0, -4],
+        "Drain": [0, -4, -2],
     },
     "DE": {
         "name": "Don't Eat.",
         "dialogues": ["Resist gluttony, must resist...", "The food looks more tasty..."],
+        "prize": 3,
         "LocOpt": [2, 1],
-        "Drain": [-3, -5],
+        "Drain": [-2, -4, -6],
     },
     "SC": {
         "name": "Sacrifice.",
         "dialogues": ["Sacrifice, to all the sins.", "You feel forgiven..."],
+        "prize": 4,
         "LocOpt": [3, 0],
-        "Drain": [-6, -2],
+        "Drain": [-6, -2, -4],
     },
     "BT": {
         "name": "Baptism.",
         "dialogues": ["Your sins were forgotten.", "Evil Nostalgia."],
+        "prize": 1,
         "LocOpt": [1, 1],
-        "Drain": [0, -4]
+        "Drain": [0, -4, -2]
+    },
+    "CB": {
+        "name": "Celebrate.",
+        "dialogues": ["Thank him for our sake!", "Oh we thank you!"],
+        "prize": 1,
+        "LocOpt": [1, 0],
+        "Drain": [0, -6, -2]
     }
 }
 
@@ -154,7 +166,6 @@ curMaxStats: list = [10, 15, 10]
 curDrainStats: list = [0, -2, -1]
 
 curChar: str = "Newbie"
-# ! Badges are unobtainable
 curBadges: int = 0
 
 curLoc: list = [2, 0]
@@ -301,10 +312,10 @@ def loadG() -> None:
         with open('backend/saveFile/__save__.txt', 'r') as F:
             L = F.readlines()
             if len(L) < 6:
-                G.Cprint("Save File seems to be missing values or is empty...", 2)
+                G.Cprint("Save File seems to be missing values or is empty...")
                 input(f"{" " * 5}( Save the game! ) Press enter to abort...")
             curChar = str(L[0])
-            initVar(True)
+            updCharVal()
             curStats = eval(L[1])
             curLoc = eval(L[2])
             curRNG = int(L[3])
@@ -312,10 +323,10 @@ def loadG() -> None:
             doneTask = bool(L[5])
         return True
     except PermissionError:
-        G.Cprint("Unable to load game...")
+        input(f"{" " * 5}Unable to load game...")
         return False
     except FileNotFoundError:
-        G.Cprint("File does not exist, start a new game.")
+        input(f"{" " * 5}File does not exist, start a new game.")
         return False
     except Exception as e:
         raise e

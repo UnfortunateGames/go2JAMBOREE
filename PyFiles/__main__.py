@@ -19,9 +19,10 @@ checkKB: str = "check"
 askKB: str = "ask"
 waitKB: str = "wait"
 sleepKB: str = "sleep"
+getKB: str = "get"
 menuKB: str = "menu"
 backKB: str = "back"
-inventoryKB: str = "inventory"
+bagKB: str = "bag"
 
 hasStartedGame: bool = False
 
@@ -116,8 +117,8 @@ def initPunish() -> None:
         wait(1)
     BE.hPlayer("hp", -10)
     BE.hPlayer("stamina", -10)
+    dur = 1.5
     for x in range(0, 2):
-        dur = 1.5
         letters = ["#", ":", "."]
         for y in letters:
             cls()
@@ -155,6 +156,12 @@ def initAct() -> None:
             print(G.fcheckSprite())
             print(G.fcheckActs())
             input("\n     Press Enter to continue...")
+        elif x == getKB:
+            items = [None, "apple", "water", "meat"]
+            if G.canCollect() == 0:
+                input(f"{" " * 5}There is nothing here!")
+            else:
+                BE.inventory[items[G.canCollect()]] += 1
         elif x == backKB:
             break
         else:
@@ -200,12 +207,16 @@ def initInventory() -> None:
                 input("     There is no Meat...")
         elif x == "apple":
             if BE.inventory["apple"] > 0:
-                pass
+                BE.inventory["apple"] -= 1
+                for x in range(0, 2):
+                    BE.curStats += BE.itemList["apple"]["heal"][x]
             else:
                 input("     There is no Apples...")
         elif x == "water":
             if BE.inventory["water"] > 0:
-                pass
+                BE.inventory["water"] -= 1
+                for x in range(0, 2):
+                    BE.curStats += BE.itemList["water"]["heal"][x]
             else:
                 input("     There is no Water...")
         elif x  == backKB:
@@ -234,9 +245,11 @@ def initDisplay() -> None:
                 cls()
                 wait(1)
                 G.taskAnim()
+                BE.curBadges += BE.taskList[BE.curTask]["prize"]
                 BE.mvGTime(4)
                 BE.hPlayer("hp", BE.taskList[BE.curTask]["Drain"][0])
                 BE.hPlayer("stamina", BE.taskList[BE.curTask]["Drain"][1])
+                BE.hPlayer("hunger", BE.taskList[BE.curTask]["Drain"][2])
                 BE.doneTask = True
                 wait(2)
                 cls()
@@ -244,10 +257,9 @@ def initDisplay() -> None:
             else:
                 input(f"\n{" " * 9}I can't do that here.")
         elif x == waitKB:
-            G.curMenu = 3
             initWait()
-        elif x == inventoryKB:
-            G.curMenu = 4
+        elif x == bagKB:
+            G.curMenu = 3
             initInventory()
         elif x == menuKB:
             break
@@ -303,7 +315,7 @@ def initChChar() -> None:
             if BE.charUnlock[x] is True:
                 BE.curChar = names[x]
                 BE.updCharVal()
-                input("     You have chosen {names[x]}!")
+                input(f"     You have chosen {names[x]}!")
             else:
                 input("     Buy the character first!")
         elif y == backKB:
@@ -313,42 +325,55 @@ def initChChar() -> None:
     initMenu()
 
 def initKeyChange() -> None:
-    global leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB, inventoryKB
+    global leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB, bagKB, getKB
     while True:
         cls()
         print(G.logo)
-        print(G.fkeyChange())
+        G.menuScroll(G.fKeyCh())
         x = input(f"\n{" " * 6}< ? ) >> ").lower()
-        if x == "left":
-            leftKB = input(f"     < Current KB: {leftKB} ) >> ").lower()
-        elif x == "up":
-            upKB = input(f"     < Current KB: {upKB} ) >> ").lower()
-        elif x == "right":
-            rightKB = input(f"     < Current KB: {rightKB} ) >> ").lower()
-        elif x == "down":
-            downKB = input(f"     < Current KB: {downKB} ) >> ").lower()
-        elif x == "task":
-            taskKB = input(f"     < Current KB: {taskKB} ) >> ").lower()
-        elif x == "act":
-            actsKB = input(f"     < Current KB: {actsKB} ) >> ").lower()
-        elif x == "check":
-            checkKB = input(f"     < Current KB: {checkKB} ) >> ").lower()
-        elif x == "ask":
-            askKB = input(f"     < Current KB: {askKB} ) >> ").lower()
-        elif x == "wait":
-            waitKB = input(f"     < Current KB: {waitKB} ) >> ").lower()
-        elif x == "sleep":
-            sleepKB = input(f"     < Current KB: {sleepKB} ) >> ").lower()
-        elif x == "back":
-            backKB = input(f"     < Current KB: {backKB} ) >> ").lower()
-        elif x == "menu":
-            menuKB = input(f"     < Current KB: {menuKB} ) >> ").lower()
-        elif x == "inventory":
-            inventoryKB = input(f"     < Current KB: {inventoryKB} ) >> ").lower()
+        if BE.curMenu == 0:
+            if x == "left":
+                leftKB = input(f"     < Current KB: {leftKB} ) >> ").lower()
+            elif x == "up":
+                upKB = input(f"     < Current KB: {upKB} ) >> ").lower()
+            elif x == "right":
+                rightKB = input(f"     < Current KB: {rightKB} ) >> ").lower()
+            elif x == "down":
+                downKB = input(f"     < Current KB: {downKB} ) >> ").lower()
+        if BE.curMenu == 1:
+            if x == "act":
+                actsKB = input(f"     < Current KB: {actsKB} ) >> ").lower()
+            elif x == "check":
+                checkKB = input(f"     < Current KB: {checkKB} ) >> ").lower()
+            elif x == "ask":
+                askKB = input(f"     < Current KB: {askKB} ) >> ").lower()
+            elif x == "wait":
+                waitKB = input(f"     < Current KB: {waitKB} ) >> ").lower()
+            elif x == "sleep":
+                sleepKB = input(f"     < Current KB: {sleepKB} ) >> ").lower()
+            elif x == "get":
+                getKB = input(f"     < Current KB: {getKB} ) >> ").lower()
+        if BE.curMenu == 2:
+            if x == "back":
+                backKB = input(f"     < Current KB: {backKB} ) >> ").lower()
+            elif x == "menu":
+                menuKB = input(f"     < Current KB: {menuKB} ) >> ").lower()
+            elif x == "bag":
+                bagKB = input(f"     < Current KB: {bagKB} ) >> ").lower()
+            if x == "task":
+                taskKB = input(f"     < Current KB: {taskKB} ) >> ").lower()
+        if x == "L":
+            BE.curMenu += 1
+            if BE.curMenu > 2:
+                BE.curMenu = 0
+        elif x == "R":
+            BE.curMenu -= 1
+            if BE.curMenu < 0:
+                BE.curMenu = 2
         elif x == "exit":
             break
         else:
-            input(f"     {x} is not a Keybind!")
+            input(f"     {x} is not a Keybind in the menu!")
     cls()
     x = input("\n\n\n     Save Changes? [Y/n] > ").lower()
     if x == "n":
@@ -369,7 +394,7 @@ def initKeyChange() -> None:
         raise e
 
 def initSettings() -> None:
-    global leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB
+    global leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB, getKB, bagKB
     cls()
     Cprint("Make sure to remember")
     Cprint("Your Keybinds! UI elements")
@@ -385,7 +410,7 @@ def initSettings() -> None:
             try:
                 with open('PyFiles/settings/__settings__.txt', 'r') as F:
                     L = F.readlines()
-                    KBlist = [leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB]
+                    KBlist = [leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB, getKB, bagKB]
                     y = 0
                     for x in KBlist:
                         x = L[y]
@@ -407,7 +432,7 @@ def initSettings() -> None:
         elif x == "back":
             break
         else:
-            input("     {x} is not a valid option")
+            input(f"     {x} is not a valid option")
 
 def initMenu() -> None:
     global hasStartedGame
@@ -417,6 +442,8 @@ def initMenu() -> None:
         x = input("\n\n     < ) >> ").lower()
         if x == "continue":
             BE.loadG()
+            if BE.loadG() is False:
+                input("     An error was raised... Press enter to abort... ")
             if hasStartedGame is False:
                 hasStartedGame = True
                 cls()
