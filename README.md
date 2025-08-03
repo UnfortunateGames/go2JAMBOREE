@@ -43,11 +43,7 @@ And other things...
  - [ ] Add more characters
  - [x] ACTUAL survival
  - [ ] Add weather
-<<<<<<< HEAD
  - I will never do music
-=======
- - I will never add music to the game.
->>>>>>> 9e974cb (Update README again...)
  - [ ] Turn-based hunting
  - [ ] Story-Mode? ( I'll try )
  - [ ] RELEASE!
@@ -64,8 +60,4 @@ And other things...
 4. When are you gonna release/finalize it?
 > "After version v0.6.0-beta"
 5. Do you have a roadmap?
-<<<<<<< HEAD
-> "Yes, and no. Yes because I made on, and no because I'll focus on bug-fixes/play-testing."
-=======
 > "Yes, I made one, but I wont show it"
->>>>>>> 9e974cb (Update README again...)
