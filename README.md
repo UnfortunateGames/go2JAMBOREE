@@ -26,11 +26,11 @@ Though in version v0.1.0-alpha you can't even die, but hey atleast you can't do 
 
 ## Features coming up
 
- - [ ] Wiki for the Game
+ - [x] Wiki for the Game
  - [ ] Add more characters
- - [ ] ACTUAL survival
+ - [x] ACTUAL survival
  - [ ] Add weather
- - [ ] Add music? ( Probably will never happen )
+ - I will never do music
  - [ ] Turn-based hunting
  - [ ] Story-Mode? ( I'll try )
  - [ ] RELEASE!
