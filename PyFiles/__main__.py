@@ -6,6 +6,9 @@ import gui.__gui__ as G
 # This code makes me want to rip my insides out.
 # No seriously.
 
+# ? Can this be multiple statements?
+# ? or either hardcoded only..?
+
 leftKB: str = "left"
 upKB: str = "up"
 rightKB: str = "right"
@@ -41,28 +44,33 @@ def initDeath() -> None:
         cls()
     wait(2)
     if BE.deaths >= 3:
-        G.printAnim("Oh no... Your decay.", "\n\n\n")
+        dialogue = ["Oh...", "I'm sorry...", "You did not pass my test...", "You were perfect...", "MY CREATION.", "Though you have failed me..."]
+        for x in dialogue:
+            G.printAnim(x, "\n")
+            wait(1)
         wait(1)
-        G.printAnim("It's too severe...", "\n")
-        wait(1)
-        G.printAnim("I'm sorry...", "\n")
-        wait(2)
-        cls()
-        print("\n\n")
-        G.menuScroll(G.gameOver)
-        x = input(f"\n\n\n{" " * 6}< ? ) >> ").lower()
-        if x == menuKB or x == backKB:
-            initMenu()
-        elif x == "continue?" or x == "continue":
-            BE.updCharVal()
-            BE.initVar()
-            initIntro()
+        while True:
+            cls()
+            print("\n\n")
+            G.menuScroll(G.gameOver)
+            x = input(f"\n\n\n{" " * 6}< ? ) >> ").lower()
+            if x == menuKB or x == backKB:
+                func = initMenu()
+                break
+            elif x == "retry?" or x == "retry":
+                BE.updCharVal()
+                BE.initVar()
+                func = initIntro()
+                break
+            else:
+                input(f"     {x} is not an option...")
+        func()
+        return
     BE.hPlayer()
-    G.printAnim("Oh you poor thing.", "\n\n\n")
-    wait(1)
-    G.printAnim("You can always try again.", "\n")
-    wait(1)
-    G.printAnim("As long as I am here.", "\n")
+    dialogue = ["Oh...", "Do not worry...", "For I am here...", "I will always forgive you..."]
+    for x in dialogue:
+        G.printAnim(x, "\n")
+        wait(1)
     wait(1)
     cls()
     wait(2)
@@ -81,7 +89,7 @@ def initMove() -> None:
         G.fLocDisplay()
         print(G.displayStat())
         G.actScroll()
-        x = input(f"{" " * 5}< ! ? ) >> ").lower()
+        x = input(f"{" " * 6}< ! ? ) >> ").lower()
         if x == leftKB and G.checkAct("l") is True:
             BE.curLoc[0] -= 1
             G.moveAnim()
@@ -125,7 +133,7 @@ def initAct() -> None:
         G.fLocDisplay()
         print(G.displayStat())
         G.actScroll()
-        x = input(f"\n{" "* 5}< ! ? ) >> ")
+        x = input(f"\n{" "* 6}< ! ? ) >> ")
         if x == sleepKB and BE.curLoc == [1, 0] and BE.canSleep is True:
             cls()
             BE.mvGTime(None)
@@ -146,19 +154,19 @@ def initAct() -> None:
             cls()
             print(G.fcheckSprite())
             print(G.fcheckActs())
-            input(f"\n{" " * 6}Press Enter to continue...")
+            input("\n     Press Enter to continue...")
         elif x == backKB:
             break
         else:
-            input(f"\n{" " * 6}I'm not allowed to do that here!")
+            input("\n     I'm not allowed to do that here!")
     G.curMenu = 0
 
 def initWait() -> None:
     if BE.canWait is False:
-        input(f"{" " * 5}I'm tired of waiting...")
+        input("     I'm tired of waiting...")
         return
     elif BE.WTime == "Night":
-        input(f"{" " * 5}I would rather sleep than wait...")
+        input("     I would rather sleep than wait...")
         return
     while True:
         cls()
@@ -178,7 +186,33 @@ def initWait() -> None:
 
 def initInventory() -> None:
     while True:
-        pass
+        cls()
+        G.fLocDisplay()
+        print(G.displayStat())
+        G.actScroll()
+        x = input(f"{" " * 6}< ! ? ) >> ").lower()
+        if x == "meat":
+            if BE.inventory["meat"] > 0:
+                BE.inventory["meat"] -= 1
+                for x in range(0, 2):
+                    BE.curStats += BE.itemList["meat"]["heal"][x]
+            else:
+                input("     There is no Meat...")
+        elif x == "apple":
+            if BE.inventory["apple"] > 0:
+                pass
+            else:
+                input("     There is no Apples...")
+        elif x == "water":
+            if BE.inventory["water"] > 0:
+                pass
+            else:
+                input("     There is no Water...")
+        elif x  == backKB:
+            break
+        else:
+            input(f"     {x} is not an item!")
+    G.curMenu = 0
 
 def initDisplay() -> None:
     while True:
@@ -188,7 +222,7 @@ def initDisplay() -> None:
         G.fLocDisplay()
         print(G.displayStat())
         G.actScroll()
-        x = input(f"{" " * 5}< ! ) >> ").lower()
+        x = input("     < ! ) >> ").lower()
         if x == "move":
             G.curMenu = 1
             initMove()
@@ -221,7 +255,7 @@ def initDisplay() -> None:
             input(f"\n{" " * 6}{x}? I can't do that...")
 
 def initIntro() -> None:
-    dialogue1 = ["Hello.", "Are you here?", "Good.", "Open your eyes."]
+    dialogue1 = ["Hello?", "Are you here?", "Good.", "Open your eyes..."]
     dialogue2 = ["You are my creation.", "You are not ready.", "Now, you should go to my altar", "Go explore for yourself."]
     for x in dialogue1:
         cls()
@@ -250,64 +284,73 @@ def initChChar() -> None:
         elif x > len(stats) - 1:
             x = 0
         G.fCharMenu(x)
-        y = input(f"\n\n{" " * 5}< \o/ ) >> ").lower()
+        y = input(f"\n\n{" " * 6}< \o/ ) >> ").lower()
         if y == "left":
             x -= 1
         elif y == "right":
             x += 1
         elif y == "get":
-            pass
+            if BE.charUnlock[x] is True:
+                input("     This character is already bought.")
+            elif stats[x]["price"] < BE.curBadges:
+                BE.curBadges -= stats[x]["price"]
+                input("     Successfully bought character!")
+            elif x == 3:
+                input("     He hasnt fallen.")
+            elif stats[x]["price"] > BE.curBadges:
+                input("     Badges are too low.")
         elif y == "equip":
-            if BE.charUnlocks[x] is True:
-                for y in range(0, 1):
-                    BE.curMaxStats[y] = stats[x]["max"][y]
-                    BE.curDrainStats[y] = stats[x]["drain"][y]
-                input(f"{" " * 5}You have chosen {names[x]}!")
+            if BE.charUnlock[x] is True:
+                BE.curChar = names[x]
+                BE.updCharVal()
+                input("     You have chosen {names[x]}!")
             else:
-                input(f"{" " * 5}Buy the character first!")
+                input("     Buy the character first!")
         elif y == backKB:
             break
         else:
-            input(f"\n{" " * 6}{y} is not a valid Command!")
+            input("\n     {y} is not a valid Command!")
     initMenu()
 
 def initKeyChange() -> None:
-    global leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB
+    global leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB, inventoryKB
     while True:
         cls()
         print(G.logo)
         print(G.fkeyChange())
         x = input(f"\n{" " * 6}< ? ) >> ").lower()
         if x == "left":
-            leftKB = input(f"{" " * 5}< Current KB: {leftKB} ) >> ").lower()
+            leftKB = input(f"     < Current KB: {leftKB} ) >> ").lower()
         elif x == "up":
-            upKB = input(f"{" " * 5}< Current KB: {upKB} ) >> ").lower()
+            upKB = input(f"     < Current KB: {upKB} ) >> ").lower()
         elif x == "right":
-            rightKB = input(f"{" " * 5}< Current KB: {rightKB} ) >> ").lower()
+            rightKB = input(f"     < Current KB: {rightKB} ) >> ").lower()
         elif x == "down":
-            downKB = input(f"{" " * 5}< Current KB: {downKB} ) >> ").lower()
+            downKB = input(f"     < Current KB: {downKB} ) >> ").lower()
         elif x == "task":
-            taskKB = input(f"{" " * 5}< Current KB: {taskKB} ) >> ").lower()
+            taskKB = input(f"     < Current KB: {taskKB} ) >> ").lower()
         elif x == "act":
-            actsKB = input(f"{" " * 5}< Current KB: {actsKB} ) >> ").lower()
+            actsKB = input(f"     < Current KB: {actsKB} ) >> ").lower()
         elif x == "check":
-            checkKB = input(f"{" " * 5}< Current KB: {checkKB} ) >> ").lower()
+            checkKB = input(f"     < Current KB: {checkKB} ) >> ").lower()
         elif x == "ask":
-            askKB = input(f"{" " * 5}< Current KB: {leftKB} ) >> ").lower()
+            askKB = input(f"     < Current KB: {askKB} ) >> ").lower()
         elif x == "wait":
-            waitKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            waitKB = input(f"     < Current KB: {waitKB} ) >> ").lower()
         elif x == "sleep":
-            sleepKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            sleepKB = input(f"     < Current KB: {sleepKB} ) >> ").lower()
         elif x == "back":
-            backKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            backKB = input(f"     < Current KB: {backKB} ) >> ").lower()
         elif x == "menu":
-            menuKB = input(f"{" " * 5}< Choose a Keybind ) >> ").lower()
+            menuKB = input(f"     < Current KB: {menuKB} ) >> ").lower()
+        elif x == "inventory":
+            inventoryKB = input(f"     < Current KB: {inventoryKB} ) >> ").lower()
         elif x == "exit":
             break
         else:
-            input(f"{" " * 5}{x} is not a Keybind!")
+            input(f"     {x} is not a Keybind!")
     cls()
-    x = input(f"\n\n\n{" " * 5}Save Changes? [Y/n] > ").lower()
+    x = input("\n\n\n     Save Changes? [Y/n] > ").lower()
     if x == "n":
         return
     try:
@@ -349,22 +392,22 @@ def initSettings() -> None:
                         y += 1
             except PermissionError:
                 Cprint("Unable to read!", 5)
-                input(f"{" " * 5}Press Enter to continue...")
+                input("     Press Enter to continue...")
             except FileNotFoundError:
                 Cprint("File is deleted or doesn't ecit...")
-                input(f"{" " * 5}Press Enter to continue...")
+                input("     Press Enter to continue...")
             except Exception as e:
                 raise e
         elif x == "save":
             BE.saveG()
             if BE.saveG() is True:
-                input(f"\n{" " * 5}Game saved successfully!")
+                input("\n     Game saved successfully!")
             elif BE.saveG() is False:
-                input(f"{" " * 5}An error was raised... Press enter to abort... ")
+                input("     An error was raised... Press enter to abort... ")
         elif x == "back":
             break
         else:
-            input(f"{" " * 5}{x} is not a valid option")
+            input("     {x} is not a valid option")
     initMenu()
 
 def initMenu() -> None:
@@ -372,7 +415,7 @@ def initMenu() -> None:
     while True:
         cls()
         G.menuScroll(G.mainMenu)
-        x = input(f"\n\n{" " * 5}< ) >> ").lower()
+        x = input("\n\n     < ) >> ").lower()
         if x == "continue":
             BE.loadG()
             if hasStartedGame is False:
@@ -397,7 +440,8 @@ def initMenu() -> None:
             input(f"\n\n{" " * 6}Press Enter to continue...")
         elif x == "exit":
             break
-        input(f"\n{" " * 10}{x} is not a valid command! ")
+        else:
+            input(f"\n{" " * 10}{x} is not a valid command! ")
 
 def initGame() -> None:
     cls()

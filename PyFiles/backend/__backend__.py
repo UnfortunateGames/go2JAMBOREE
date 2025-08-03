@@ -93,17 +93,17 @@ locList: dict = {
 }
 
 itemList: dict = {
-    "Meat": {
+    "meat": {
         "desc": "Yum...",
         "sprite": None,
         "heal": [0, 2, 6]
     },
-    "Apple": {
+    "apple": {
         "desc": "Eat healthy!",
         "sprite": None,
         "heal": [2, 1, 3]
     },
-    "Water": {
+    "water": {
         "desc": "Thirsty...",
         "sprite": None,
         "heal": [1, 5, 0]
@@ -137,7 +137,6 @@ sustainerStats: dict = {
     "drain": [-2, -1, -2]
 }
 
-# ! Make Fallen Unobtainable
 fallenStats: dict = {
     "head": "(*)",
     "body": '"|" ',
@@ -162,9 +161,9 @@ curLoc: list = [2, 0]
 curRNG: int = 0
 curTask: str = None
 inventory: dict = {
-    "Meat": 0,
-    "Fruit": 0,
-    "Water": 0
+    "meat": 0,
+    "fruit": 0,
+    "water": 0
 }
 
 GTime: int = 0
@@ -207,7 +206,6 @@ def hPlayer(stat=None, amount=None) -> None:
         else:
             curStats[2] += amount
 
-# ! Optimize this
 def checkDeath() -> int:
     if curStats[0] <= 0:
         return 1
@@ -256,6 +254,10 @@ def updCharVal() -> None:
         char = newbieStats
     elif curChar == "Expert":
         char = expertStats
+    elif curChar == "Sustainer":
+        char = sustainerStats
+    elif curChar == "Fallen":
+        char = fallenStats
     for x in range(0, 2):
         curMaxStats[x] = char["max"][x]
         curDrainStats[x] = char["drain"][x]

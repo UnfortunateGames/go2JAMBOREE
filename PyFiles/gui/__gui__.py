@@ -38,7 +38,7 @@ def fmainActs() -> str:
        (  Acts  )=============[ {"!" if BE.curLoc == [0, 1] or BE.curLoc == [1, 0]else " "} ]
        (  Task  )=============[ {"!" if BE.checkTask() is True else " "} ]
        (  Wait  )=============[ {"!" if BE.canWait is True else " "} ]
-                [ 'Inventory' ] >>
+          >> [ 'Bag' ] ->
     << 'Menu' to Main Menu
 """
 
@@ -134,10 +134,11 @@ def fkeyChange() -> str:
       > ( Right )   |  > ( Check )
       > ( Down  )   |  > ( Sleep )
                     |
-      [ MISC KBs ]  |   //_Electric       
+      [ MISC KBs ]  | [ More Soon! ]
+      > (  Bag  )   |   //_Electric       
       > ( Tasks )   |  /_ /-Splash-
       > ( Back  )   |   //=========
-      > ( Menu  )   |  [##########]
+      > ( Menu  )   |  [ :D :P :) ]
    << 'Exit' to exit this menu
 
  |_|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|_|
@@ -344,9 +345,102 @@ def fCTAnim() -> str:
 
 def fPMAnim() -> str:
     return [
-    """
-Hello World!
-"""
+    f"""
+{" " * 16}
+{" " * 16}{curHead} .___.
+{" " * 16}{curBody}.|~|.
+{" " * 16}/ \ '---'
+""",
+    f"""
+{" " * 16}
+{" " * 16}{curHead} .___.
+{" " * 16}/,, .|~|.
+{" " * 16} >> '---'
+""",
+    f"""
+{" " * 16}
+{" " * 16}{curHead} .___.
+{" " * 16}/:  .|~|.
+{" " * 16}>>  '---'
+""",
+    f"""
+{" " * 16}
+{" " * 16}    .___.
+{" " * 16},{head[1]}: .|~|.
+{" " * 16}>>  '---'
+""",
+    f"""
+{" " * 16}     _ 
+{" " * 16}    .___.
+{" " * 16},{head[1]}" .|~|.
+{" " * 16}>>  '---'
+""",
+    f"""
+{" " * 16}     " .
+{" " * 16}    |___'
+{" " * 16},{head[1]}" .|~|.
+{" " * 16}>>  '---'
+""",
+    f"""
+{" " * 16}    | _''
+{" " * 16}    '___|
+{" " * 16},{head[1]}" .|~|.
+{" " * 16}>>  '---'
+""",
+    f"""
+{" " * 16}    ' " |
+{" " * 16}    '___'
+{" " * 16},{head[1]}" .|~|.
+{" " * 16}>>  '---'
+""",
+    f"""
+{" " * 16}    |   |
+{" " * 16}    |___|
+{" " * 16},{head[1]}" .|~|.
+{" " * 16}>>  '---'
+""",
+    f"""
+{" " * 16}    |   |
+{" " * 16}    |___|
+{" " * 16},{head[1]}. .|~|.
+{" " * 16}> / '---'
+""",
+    f"""
+{" " * 16}    |   |
+{" " * 16} {curHead}|___|
+{" " * 16}\/. .|~|.
+{" " * 16}/ > '---'
+""",
+    f"""
+{" " * 16}    |   |
+{" " * 15}{curHead}  |___|
+{" " * 16}<\> .|~|.
+{" " * 16}/ \ '---'
+""",
+    f"""
+{" " * 16}    |   |
+{" " * 15}{curHead}  |___|
+{" " * 16}<\> .|~|.
+{" " * 16}/ \ '---'
+""",
+    f"""
+{" " * 16}    |   |
+{" " * 16}{curHead} |___|
+{" " * 16}<{body[1]}> .|~|.
+{" " * 16}/ \ '---'
+""",
+    f"""
+{" " * 16}    |   |
+{" " * 16}{curHead} |___|
+{" " * 16}{curBody}.|~|.
+{" " * 16}/ \ '---'
+""",
+    f"""
+{" " * 16}    |   |
+{" " * 16}{curHead} |___|
+{" " * 16}{curBody}.|~|.
+{" " * 16}/ \ '---'
+""",
     ]
 
 def fDEAnim() -> str:
@@ -399,7 +493,7 @@ def fLocDisplay(returnSprite=False) -> None or str:
 def fCharMenu(x) -> str:
     charlist = [BE.newbieStats, BE.expertStats, BE.sustainerStats, BE.fallenStats]
     char = charlist[x]
-    charHead = char["body"]
+    charHead = char["head"]
     charBody = char["body"]
     charPrice = char["price"]
     desc = char["desc"]
@@ -416,8 +510,8 @@ def fCharMenu(x) -> str:
            Choose a Charcter:
            < Left  ][ Right >
           -> "{desc}"
-           {charHead}  Health  : {char[0]}
-           {charBody} Stamina : {char[1]}
+           {charHead} Health  : {char["max"][0]}
+           {charBody}Stamina : {char["max"][1]}
            / \  {equip}
           << 'Back' to Main Menu
     
@@ -430,9 +524,9 @@ def fInventoryMenu() -> str:
     return f"""
      Inventory:
 
-       [ Meat  ]===============[ {BE.inventory["Meat"]} ]
-       [ Fruit ]===============[ {BE.inventory["Fruit"]} ]
-       [ Water ]===============[ {BE.inventory["Water"]} ]
+       [ Meat  ]===============[ {BE.inventory["meat"]} ]
+       [ Apple ]===============[ {BE.inventory["fruit"]} ]
+       [ Water ]===============[ {BE.inventory["water"]} ]
 
     << 'Back' to main menu
 """
@@ -469,7 +563,7 @@ def displayStat() -> str:
 '.==HP==[{"#"*HPamnt}{noBar}]==|==//===========.'"""
 
 def actScroll() -> None:
-    menus = [fmainActs(), fmoveActs(), factionActs(), fInventoryMenu()]
+    menus = [fmainActs(), fmoveActs(), factionActs(), fInventoryMenu(), fInventoryMenu()]
     print(f"_0_{" " * 34}_0_")
     print(f"| |{"~" * 34}| |")
     print(menus[curMenu])
@@ -499,7 +593,7 @@ def taskAnim() -> None:
     if BE.curTask == "CT":
         anim = fCTAnim()
     elif BE.curTask == "PM":
-        anim = fCTAnim()
+        anim = fPMAnim()
     elif BE.curTask == "DE":
         anim = fCTAnim()
     elif BE.curTask == "SC":
@@ -508,6 +602,7 @@ def taskAnim() -> None:
         anim = fCTAnim()
     for x in range(0, 16):
         cls()
+        print(x)
         print(f"\n\n{" " * 11}_0_{" " * 11}_0_")
         print(f"{" " * 11}| |{"~" * 11}| |\n")
         print(anim[x])
