@@ -357,7 +357,7 @@ def initKeyChange() -> None:
         with open('PyFiles/settings/__settings__.txt', 'w') as F:
             KBlist = [leftKB, upKB, rightKB, downKB, taskKB, actsKB, checkKB, askKB, waitKB, sleepKB, backKB, menuKB]
             for x in KBlist:
-                F.write(f"{x}")
+                F.write(f"{x}\n")
     except PermissionError:
         Cprint("Unable to save settings...")
         Cprint("Game is not allowed to write")
@@ -408,7 +408,6 @@ def initSettings() -> None:
             break
         else:
             input("     {x} is not a valid option")
-    initMenu()
 
 def initMenu() -> None:
     global hasStartedGame
