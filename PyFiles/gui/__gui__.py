@@ -564,18 +564,35 @@ def printAnim(m=str, before="") -> None:
         wait(y)
         y += x
 
+def Cprint(message=str, spaces=None) -> None:
+    if spaces is None:
+        spaces = " " * int((40 - len(list(message))) / 2)
+    print(spaces + message)
+
 def displayStat() -> str:
     HPamnt = int(BE.curStats[0] // (BE.curMaxStats[0] / 10))
     noBar = "-" * (10 - HPamnt)
     hpgap = ""
     staminagap = ""
+    if BE.GTime < 10:
+        gtime = f" {BE.GTime}"
+    else:
+        gtime = BE.GTime
+    if BE.WTime == "Day":
+        wtime = "day  "
+    elif BE.WTime == "Night":
+        wtime = "night"
+    if BE.doneTask is True:
+        task = "is "
+    elif BE.doneTask is False:
+        task = "not"
     if BE.curStats[0] < 10:
         hpgap = " "
     if BE.curStats[1] < 10:
         staminagap = " "
-    return f""".'.{curHead}.| Health  : {hpgap}{BE.curStats[0]} |..//_Electric..'.
-|::{curBody}:| Stamina : {staminagap}{BE.curStats[1]} |:/_ /-Splash-:::|
-'.==HP==[{"#"*HPamnt}{noBar}]==|==//===========.'"""
+    return f""".'.{curHead}.| Health  : {hpgap}{BE.curStats[0]} | Time: {gtime}      '.
+|::{curBody}| Stamina : {staminagap}{BE.curStats[1]} | It is {wtime}    |
+'.==HP==[{"#"*HPamnt}{noBar}]==| Task {task} Done .'"""
 
 def actScroll() -> None:
     menus = [fmainActs(), fmoveActs(), factionActs(), fInventoryMenu()]

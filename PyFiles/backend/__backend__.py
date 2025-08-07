@@ -281,6 +281,7 @@ def initVar() -> None:
     IsThereAnimal = PLanimalChance()
     canSleep = doneTask = heardTask = False
     canWait = True
+    # ! curRNG unused until Weather is implemented
     curRNG = rRN(0, 3)
     curTask = taskList["list"][rRN(0, len(taskList["list"]) - 1)]
     GTime = 0
