@@ -620,6 +620,4 @@ def initGame() -> None:
     initMenu()
 
 if __name__ == "__main__":
-    # initGame()
-    BE.initVar()
-    initBattle()
+    initGame()
