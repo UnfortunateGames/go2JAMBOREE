@@ -1,10 +1,9 @@
-from cmds.__cmds__ import cls, wait
+from cmds.__cmds__ import cls, wait, rRN
 import backend.__backend__ as BE
 import gui.__gui__ as G
 
-# HOOOOOLLYYYYY SHIIIIIIII-
-# This code makes me want to rip my insides out.
-# No seriously.
+# Might uhhh...
+# Run out of passion because of this...
 
 keybinds: dict = {
     "leftKB": "left",
@@ -24,6 +23,276 @@ keybinds: dict = {
 }
 
 hasStartedGame: bool = False
+
+# - BATTLE FUNCTION -
+
+def initBattle() -> None:
+    animalStats = {
+        "HP": BE.curAnimal["HP"],
+        "DF": BE.curAnimal["defense"],
+        "MS": BE.curAnimal["moveSet"]
+    }
+    move1 = BE.curmoveSet["list"][0]
+    move2 = BE.curmoveSet["list"][1]
+    move3 = BE.curmoveSet["list"][2]
+    maxcd1 = BE.curmoveSet[move1][1]
+    maxcd2 = BE.curmoveSet[move2][1]
+    maxcd3 = BE.curmoveSet[move3][1]
+    runChance = 100
+    localCDs = {
+        0: 0,
+        1: 0,
+        2: 0
+    }
+    def printMenu() -> None:
+        cls()
+        G.displayStat()
+        # print animal
+        G.actScroll(False, G.fBattleMenu(localCDs[0], localCDs[1], localCDs[3], runChance))
+    def dealdmg(n=int) -> None:
+        localCDs[0] -= 1
+        localCDs[1] -= 1
+        localCDs[2] -= 1
+        moves = [move1, move2, move3]
+        animalStats["HP"] -= BE.curmoveSet[moves[n]][0] - round(animalStats["DF"] * 0.2)
+        cds = {
+            0: [localCDs[0], localCDs[1], localCDs[2]],
+            1: [maxcd1, maxcd2, maxcd3]
+        }
+        cds[0][n] = cds[1][n]
+        # slash animation
+        x = rRN(0, 1)
+        if x == 0:
+            printMenu()
+            BE.curStats[0] -= animalStats["MS"][animalStats["MS"]["list"][0]]
+            G.printAnim(f"{BE.curAnimal["name"]} used {animalStats["MS"]["list"][0]}")
+            wait(1)
+        if x == 1:
+            printMenu()
+            animalStats["HP"] += animalStats["MS"][animalStats["MS"]["list"][1]]
+            G.printAnim(f"{BE.curAnimal["name"]} used {animalStats["MS"]["list"][1]}")
+            wait(1)
+    while True:
+        if animalStats["HP"] <= 0:
+            break
+        if BE.checkDeath() > 0:
+            initDeath()
+        printMenu()
+        x = input(f"\n{" " * 6}< ! ) >>")
+        if x == move1.lower():
+            if localCDs[0] <= 0:
+                dealdmg(0)
+                runChance -= 5
+            else:
+                input(f"{" " * 5}It's on cooldown!")
+        elif x == move2.lower():
+            if localCDs[1] <= 0:
+                dealdmg(1)
+                runChance -= 5
+            else:
+                input(f"{" " * 5}It's on cooldown!")
+        elif x == move3.lower():
+            if localCDs[2] <= 0:
+                dealdmg(2)
+                runChance -= 5
+            else:
+                input(f"{" " * 5}It's on cooldown!")
+        elif x == "item":
+            pass
+        elif x == "run":
+            y = rRN(0, 100)
+            if y <= runChance:
+                pass
+            else:
+                pass
+
+# - ACTS MENU -
+
+def gamedisplay() -> None:
+    G.fLocDisplay()
+    G.displayStat()
+    G.actScroll()
+
+def initDisplay() -> None:
+    while True:
+        if BE.checkDeath() > 0:
+            initDeath()
+        cls()
+        gamedisplay()
+        x = input("     < ! ) >> ").lower()
+        if x == "move":
+            G.curMenu = 1
+            initMove()
+        elif x == keybinds["actsKB"]:
+            G.curMenu = 2
+            initAct()
+        elif x == keybinds["taskKB"]:
+            if G.checkAct("do") is True:
+                cls()
+                wait(1)
+                G.taskAnim()
+                BE.curBadges += BE.taskList[BE.curTask]["prize"]
+                BE.mvGTime(4)
+                BE.hPlayer("hp", BE.taskList[BE.curTask]["Drain"][0])
+                BE.hPlayer("stamina", BE.taskList[BE.curTask]["Drain"][1])
+                BE.hPlayer("hunger", BE.taskList[BE.curTask]["Drain"][2])
+                BE.doneTask = True
+                wait(2)
+                cls()
+                initDisplay()
+            else:
+                input(f"\n{" " * 9}I can't do that here.")
+        elif x == keybinds["waitKB"]:
+            initWait()
+        elif x == keybinds["bagKB"]:
+            G.curMenu = 3
+            initBag()
+        elif x == keybinds["menuKB"]:
+            break
+        else:
+            input(f"\n{" " * 6}{x}? I can't do that...")
+
+def initMove() -> None:
+    def arrivalAnim() -> None:
+        G.fLocDisplay()
+        print("\n")
+        G.printAnim(BE.locList[BE.locList["list"][BE.curLoc[1]][BE.curLoc[0]]])
+        wait(1)
+    while True:
+        BE.mvGTime()
+        BE.updTVal()
+        if BE.updTVal() == 1:
+            BE.hPlayer("hp", BE.curDrainStats[0])
+            BE.hPlayer("stamina", BE.curDrainStats[1])
+        if BE.checkDeath() > 0:
+            initDeath()
+        cls()
+        gamedisplay()
+        x = input(f"{" " * 6}< ! ? ) >> ").lower()
+        if x == keybinds["leftKB"] and G.checkAct("l") is True:
+            BE.curLoc[0] -= 1
+            G.moveAnim()
+            arrivalAnim()
+        elif x == keybinds["upKB"] and G.checkAct("u") is True:
+            BE.curLoc[1] -= 1
+            G.moveAnim()
+            arrivalAnim()
+        elif x == keybinds["rightKB"] and G.checkAct("r") is True:
+            BE.curLoc[0] += 1
+            G.moveAnim()
+            arrivalAnim()
+        elif x == keybinds["downKB"] and G.checkAct("d") is True:
+            BE.curLoc[1] += 1
+            G.moveAnim()
+            arrivalAnim()
+        elif x == keybinds["backKB"]:
+            break
+        else:
+            input(f"\n{" " * 6}I'm not allowed to go there!")
+    G.curMenu = 0
+
+def initBag() -> None:
+    while True:
+        cls()
+        gamedisplay()
+        x = input(f"{" " * 6}< ! ? ) >> ").lower()
+        if x == "meat":
+            if BE.inventory["meat"] > 0:
+                BE.inventory["meat"] -= 1
+                for x in range(0, 2):
+                    BE.curStats += BE.itemList["meat"]["heal"][x]
+            else:
+                input("     There is no Meat...")
+        elif x == "apple":
+            if BE.inventory["apple"] > 0:
+                BE.inventory["apple"] -= 1
+                for x in range(0, 2):
+                    BE.curStats += BE.itemList["apple"]["heal"][x]
+            else:
+                input("     There is no Apples...")
+        elif x == "water":
+            if BE.inventory["water"] > 0:
+                BE.inventory["water"] -= 1
+                for x in range(0, 2):
+                    BE.curStats += BE.itemList["water"]["heal"][x]
+            else:
+                input("     There is no Water...")
+        elif x  == keybinds["backKB"]:
+            break
+        else:
+            input(f"     {x} is not an item!")
+    G.curMenu = 0
+
+def initAct() -> None:
+    while True:
+        cls()
+        gamedisplay()
+        x = input(f"\n{" "* 6}< ! ? ) >> ")
+        if x == keybinds["sleepKB"] and BE.curLoc == [1, 0] and BE.canSleep is True:
+            cls()
+            BE.mvGTime(None)
+            G.fRandomDialogue("sleep")
+            wait(2)
+            if BE.doneTask is False:
+                initPunish()
+            break
+        elif x == keybinds["askKB"] and BE.curLoc == [0, 1]:
+            for x in G.fTaskDialogue():
+                cls()
+                G.fLocDisplay()
+                G.printAnim(x, "\n\n")
+                wait(1)
+            BE.heardTask = True
+            wait(1)
+        elif x == keybinds["checkKB"]:
+            cls()
+            print(G.fcheckSprite())
+            print(G.fcheckActs())
+            input("\n     Press Enter to continue...")
+        elif x == keybinds["getKB"]:
+            items = [None, "apple", "water", "meat"]
+            if G.canCollect() == 0:
+                input(f"{" " * 5}There is nothing here!")
+            elif G.canCollect() > 2 and BE.IsThereAnimal is True:
+                cls()
+                G.fLocDisplay()
+                G.displayStat()
+                x = input(f"\n{" " * 6}Hunt the animal? (Y/n) >> ").lower()
+                if x != "n":
+                    initBattle()
+            elif BE.IsThereAnimal is False:
+                input(f"\n{" " * 6}It's not here yet...")
+            else:
+                BE.curBag[items[G.canCollect()]] += 1
+        elif x == keybinds["backKB"]:
+            break
+        else:
+            input("\n     I'm not allowed to do that here!")
+    G.curMenu = 0
+
+def initWait() -> None:
+    if BE.canWait is False:
+        input("     I'm tired of waiting...")
+        return
+    elif BE.WTime == "Night":
+        input("     I would rather sleep than wait...")
+        return
+    while True:
+        cls()
+        G.fLocDisplay()
+        G.displayStat()
+        x = input(f"\n{" " * 6}Wait for night? [Y/n] > ").lower()
+        if x == "n":
+            break
+        BE.GTime = 13
+        BE.updTVal()
+        cls()
+        wait(2)
+        G.fRandomDialogue("wait", "\n\n\n")
+        wait(1)
+        break
+
+# - SEQUENCES -
 
 def initDeath() -> None:
     cls()
@@ -46,7 +315,7 @@ def initDeath() -> None:
     if BE.deaths >= 3:
         dialogue = [
             "Oh...",
-            "I'm sorry...",
+            "I am sorry...",
             "You did not pass my test...",
             "You were perfect...",
             "MY CREATION.",
@@ -88,38 +357,6 @@ def initDeath() -> None:
     wait(2)
     initDisplay()
 
-def initMove() -> None:
-    while True:
-        BE.mvGTime()
-        BE.updTVal()
-        if BE.updTVal() == 1:
-            BE.hPlayer("hp", BE.curDrainStats[0])
-            BE.hPlayer("stamina", BE.curDrainStats[1])
-        if BE.checkDeath() > 0:
-            initDeath()
-        cls()
-        G.fLocDisplay()
-        print(G.displayStat())
-        G.actScroll()
-        x = input(f"{" " * 6}< ! ? ) >> ").lower()
-        if x == keybinds["leftKB"] and G.checkAct("l") is True:
-            BE.curLoc[0] -= 1
-            G.moveAnim()
-        elif x == keybinds["upKB"] and G.checkAct("u") is True:
-            BE.curLoc[1] -= 1
-            G.moveAnim()
-        elif x == keybinds["rightKB"] and G.checkAct("r") is True:
-            BE.curLoc[0] += 1
-            G.moveAnim()
-        elif x == keybinds["downKB"] and G.checkAct("d") is True:
-            BE.curLoc[1] += 1
-            G.moveAnim()
-        elif x == keybinds["backKB"]:
-            break
-        else:
-            input(f"\n{" " * 6}I'm not allowed to go there!")
-    G.curMenu = 0
-
 def initPunish() -> None:
     dialogue = [
         "My creation.",
@@ -143,144 +380,6 @@ def initPunish() -> None:
         dur -= 0.5
     cls()
     wait(2)
-
-def initAct() -> None:
-    while True:
-        cls()
-        G.fLocDisplay()
-        print(G.displayStat())
-        G.actScroll()
-        x = input(f"\n{" "* 6}< ! ? ) >> ")
-        if x == keybinds["sleepKB"] and BE.curLoc == [1, 0] and BE.canSleep is True:
-            cls()
-            BE.mvGTime(None)
-            G.fRandomDialogue("sleep")
-            wait(2)
-            if BE.doneTask is False:
-                initPunish()
-            break
-        elif x == keybinds["askKB"] and BE.curLoc == [0, 1]:
-            for x in G.fTaskDialogue():
-                cls()
-                G.fLocDisplay()
-                G.printAnim(x, "\n\n")
-                wait(1)
-            BE.heardTask = True
-            wait(1)
-        elif x == keybinds["checkKB"]:
-            cls()
-            print(G.fcheckSprite())
-            print(G.fcheckActs())
-            input("\n     Press Enter to continue...")
-        elif x == keybinds["getKB"]:
-            items = [None, "apple", "water", "meat"]
-            if G.canCollect() == 0:
-                input(f"{" " * 5}There is nothing here!")
-            else:
-                BE.inventory[items[G.canCollect()]] += 1
-        elif x == keybinds["backKB"]:
-            break
-        else:
-            input("\n     I'm not allowed to do that here!")
-    G.curMenu = 0
-
-def initWait() -> None:
-    if BE.canWait is False:
-        input("     I'm tired of waiting...")
-        return
-    elif BE.WTime == "Night":
-        input("     I would rather sleep than wait...")
-        return
-    while True:
-        cls()
-        G.fLocDisplay()
-        print(G.displayStat())
-        x = input(f"\n{" " * 6}Wait for night? [Y/n] > ").lower()
-        if x == "n":
-            break
-        BE.GTime = 2
-        BE.WTime = "Night"
-        BE.updTVal()
-        cls()
-        wait(2)
-        G.fRandomDialogue("wait", "\n\n\n")
-        wait(1)
-        break
-
-def initInventory() -> None:
-    while True:
-        cls()
-        G.fLocDisplay()
-        print(G.displayStat())
-        G.actScroll()
-        x = input(f"{" " * 6}< ! ? ) >> ").lower()
-        if x == "meat":
-            if BE.inventory["meat"] > 0:
-                BE.inventory["meat"] -= 1
-                for x in range(0, 2):
-                    BE.curStats += BE.itemList["meat"]["heal"][x]
-            else:
-                input("     There is no Meat...")
-        elif x == "apple":
-            if BE.inventory["apple"] > 0:
-                BE.inventory["apple"] -= 1
-                for x in range(0, 2):
-                    BE.curStats += BE.itemList["apple"]["heal"][x]
-            else:
-                input("     There is no Apples...")
-        elif x == "water":
-            if BE.inventory["water"] > 0:
-                BE.inventory["water"] -= 1
-                for x in range(0, 2):
-                    BE.curStats += BE.itemList["water"]["heal"][x]
-            else:
-                input("     There is no Water...")
-        elif x  == keybinds["backKB"]:
-            break
-        else:
-            input(f"     {x} is not an item!")
-    G.curMenu = 0
-
-def initDisplay() -> None:
-    while True:
-        if BE.checkDeath() > 0:
-            initDeath()
-        cls()
-        G.fLocDisplay()
-        print(G.displayStat())
-        G.actScroll()
-        x = input("     < ! ) >> ").lower()
-        if x == "move":
-            G.curMenu = 1
-            initMove()
-        elif x == keybinds["actsKB"]:
-            G.curMenu = 2
-            initAct()
-        elif x == keybinds["taskKB"]:
-            if G.checkAct("do") is True:
-                cls()
-                wait(1)
-                G.taskAnim()
-                BE.curBadges += BE.taskList[BE.curTask]["prize"]
-                BE.mvGTime(4)
-                BE.hPlayer("hp", BE.taskList[BE.curTask]["Drain"][0])
-                BE.hPlayer("stamina", BE.taskList[BE.curTask]["Drain"][1])
-                BE.hPlayer("hunger", BE.taskList[BE.curTask]["Drain"][2])
-                BE.doneTask = True
-                wait(2)
-                cls()
-                initDisplay()
-            else:
-                input(f"\n{" " * 9}I can't do that here.")
-        elif x == keybinds["waitKB"]:
-            initWait()
-        elif x == keybinds["bagKB"]:
-            G.curMenu = 3
-            initInventory()
-        elif x == keybinds["menuKB"]:
-            break
-        else:
-            input(f"\n{" " * 6}{x}? I can't do that...")
 
 def initIntro() -> None:
     dialogue1 = [
@@ -309,6 +408,79 @@ def initIntro() -> None:
     cls()
     initDisplay()
 
+# - MAIN MENU -
+
+def initMenu() -> None:
+    global hasStartedGame
+    while True:
+        cls()
+        G.menuScroll(G.mainMenu)
+        x = input("\n\n     < ) >> ").lower()
+        if x == "continue":
+            cls()
+            G.printAnim(G.fLocDisplay())
+            wait(1)
+            initDisplay()
+        elif x == "new game" or x == "new":
+            hasStartedGame = True
+            BE.updCharVal()
+            BE.initVar()
+            BE.curLoc = [2, 0]
+            initIntro()
+        elif x == "settings" or x == "setting":
+            initSettings()
+        elif x == "characters" or x == "character":
+            initChChar()
+        elif x == "credits" or x == "credit":
+            cls()
+            G.menuScroll(G.creditMenu)
+            input(f"\n\n{" " * 6}Press Enter to continue...")
+        elif x == "exit":
+            break
+        else:
+            input(f"\n{" " * 10}{x} is not a valid command! ")
+
+def initSettings() -> None:
+    cls()
+    G.Cprint("Make sure to remember")
+    G.Cprint("Your Keybinds! UI elements")
+    G.Cprint("Will not change!")
+    input(f"\n{" " * 6}Press Enter to continue...")
+    while True:
+        cls()
+        G.menuScroll(G.settingMenu)
+        x = input(f"\n{" " * 6}< ? ) >> ").lower()
+        if x == "keybind" or x == "keybinds":
+            initKeyChange()
+        elif x == "load kbs" or x == "loadkb":
+            try:
+                with open('PyFiles/settings/__settings__.txt', 'r') as F:
+                    L = F.readlines()
+                    y = 0
+                    for x in keybinds:
+                        x = L[y]
+                        y += 1
+            except PermissionError:
+                G.Cprint("Unable to read!", 5)
+                input("     Press Enter to continue...")
+            except FileNotFoundError:
+                G.Cprint("File is deleted or doesn't exist...")
+                input("     Press Enter to continue...")
+            except Exception as e:
+                raise e
+        elif x == "save":
+            BE.saveG()
+            if BE.saveG() is True:
+                input("\n     Game saved successfully!")
+            elif BE.saveG() is False:
+                input("     An error was raised... Press enter to abort... ")
+        elif x == "load":
+            BE.loadG()
+        elif x == "back":
+            break
+        else:
+            input(f"     {x} is not a valid option")
+
 def initChChar() -> None:
     global charHead
     cls()
@@ -333,14 +505,13 @@ def initChChar() -> None:
             elif stats[x]["price"] < BE.curBadges:
                 BE.curBadges -= stats[x]["price"]
                 input("     Successfully bought character!")
-            elif x == 3:
-                input("     He hasnt fallen.")
             elif stats[x]["price"] > BE.curBadges:
                 input("     Badges are too low.")
         elif y == "equip":
             if BE.charUnlock[x] is True:
                 BE.curChar = names[x]
                 BE.updCharVal()
+                G.updAVal()
                 input(f"     You have chosen {names[x]}!")
             else:
                 input("     Buy the character first!")
@@ -431,79 +602,7 @@ def initKeyChange() -> None:
     except Exception as e:
         raise e
 
-def initSettings() -> None:
-    cls()
-    G.Cprint("Make sure to remember")
-    G.Cprint("Your Keybinds! UI elements")
-    G.Cprint("Will not change!")
-    input(f"\n{" " * 6}Press Enter to continue...")
-    while True:
-        cls()
-        G.menuScroll(G.settingMenu)
-        x = input(f"\n{" " * 6}< ? ) >> ").lower()
-        if x == "keybind" or x == "keybinds":
-            initKeyChange()
-        elif x == "load" or x == "load kbs" or x == "loadkb":
-            try:
-                with open('PyFiles/settings/__settings__.txt', 'r') as F:
-                    L = F.readlines()
-                    y = 0
-                    for x in keybinds:
-                        x = L[y]
-                        y += 1
-            except PermissionError:
-                G.Cprint("Unable to read!", 5)
-                input("     Press Enter to continue...")
-            except FileNotFoundError:
-                G.Cprint("File is deleted or doesn't ecit...")
-                input("     Press Enter to continue...")
-            except Exception as e:
-                raise e
-        elif x == "save":
-            BE.saveG()
-            if BE.saveG() is True:
-                input("\n     Game saved successfully!")
-            elif BE.saveG() is False:
-                input("     An error was raised... Press enter to abort... ")
-        elif x == "back":
-            break
-        else:
-            input(f"     {x} is not a valid option")
-
-def initMenu() -> None:
-    global hasStartedGame
-    while True:
-        cls()
-        G.menuScroll(G.mainMenu)
-        x = input("\n\n     < ) >> ").lower()
-        if x == "continue":
-            BE.loadG()
-            if BE.loadG() is False:
-                input("     An error was raised... Press enter to abort... ")
-            if hasStartedGame is False:
-                hasStartedGame = True
-                cls()
-                G.printAnim(G.fLocDisplay(True))
-                wait(1)
-            initDisplay()
-        elif x == "new game" or x == "new":
-            hasStartedGame = True
-            BE.updCharVal()
-            BE.initVar()
-            BE.curLoc = [2, 0]
-            initIntro()
-        elif x == "settings" or x == "setting":
-            initSettings()
-        elif x == "characters" or x == "character":
-            initChChar()
-        elif x == "credits" or x == "credit":
-            cls()
-            G.menuScroll(G.creditMenu)
-            input(f"\n\n{" " * 6}Press Enter to continue...")
-        elif x == "exit":
-            break
-        else:
-            input(f"\n{" " * 10}{x} is not a valid command! ")
+# - INITIALIZER -
 
 def initGame() -> None:
     cls()
@@ -516,8 +615,11 @@ def initGame() -> None:
     G.fLocDisplay()
     wait(2)
     input(f"\n\n{" " * 6}Press Enter to continue... ")
+    BE.initVar()
     G.curMenu = 0
     initMenu()
 
 if __name__ == "__main__":
-    initGame()
+    # initGame()
+    BE.initVar()
+    initBattle()

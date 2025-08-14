@@ -1,1 +1,5 @@
-
+# Man I just wish python had these basic commands!
+# And I wish that wrapping a string was possible...
+# Like "[ string ]" and the space between the []
+# is equal, and throws out an error when it overflows!
+# I guess I should keep on dreaming...

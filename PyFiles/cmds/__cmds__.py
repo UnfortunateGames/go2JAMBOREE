@@ -3,7 +3,7 @@ import random
 import time
 
 # ! Don't touch these!
-# ! These are essentials...
+# ! These are essential...
 
 def cls() -> None:
     os.system('cls' if os.name == 'nt' else 'clear')
