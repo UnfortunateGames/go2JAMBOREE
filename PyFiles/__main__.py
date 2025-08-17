@@ -1,4 +1,5 @@
 from cmds.__cmds__ import cls, wait, rRN
+from battle.__battle__ import initBattle
 import backend.__backend__ as BE
 import gui.__gui__ as G
 
@@ -23,88 +24,6 @@ keybinds: dict = {
 }
 
 hasStartedGame: bool = False
-
-# - BATTLE FUNCTION -
-
-def initBattle() -> None:
-    animalStats = {
-        "HP": BE.curAnimal["HP"],
-        "DF": BE.curAnimal["defense"],
-        "MS": BE.curAnimal["moveSet"]
-    }
-    move1 = BE.curmoveSet["list"][0]
-    move2 = BE.curmoveSet["list"][1]
-    move3 = BE.curmoveSet["list"][2]
-    maxcd1 = BE.curmoveSet[move1][1]
-    maxcd2 = BE.curmoveSet[move2][1]
-    maxcd3 = BE.curmoveSet[move3][1]
-    runChance = 100
-    localCDs = {
-        0: 0,
-        1: 0,
-        2: 0
-    }
-    def printMenu() -> None:
-        cls()
-        G.displayStat()
-        # print animal
-        G.actScroll(False, G.fBattleMenu(localCDs[0], localCDs[1], localCDs[3], runChance))
-    def dealdmg(n=int) -> None:
-        localCDs[0] -= 1
-        localCDs[1] -= 1
-        localCDs[2] -= 1
-        moves = [move1, move2, move3]
-        animalStats["HP"] -= BE.curmoveSet[moves[n]][0] - round(animalStats["DF"] * 0.2)
-        cds = {
-            0: [localCDs[0], localCDs[1], localCDs[2]],
-            1: [maxcd1, maxcd2, maxcd3]
-        }
-        cds[0][n] = cds[1][n]
-        # slash animation
-        x = rRN(0, 1)
-        if x == 0:
-            printMenu()
-            BE.curStats[0] -= animalStats["MS"][animalStats["MS"]["list"][0]]
-            G.printAnim(f"{BE.curAnimal["name"]} used {animalStats["MS"]["list"][0]}")
-            wait(1)
-        if x == 1:
-            printMenu()
-            animalStats["HP"] += animalStats["MS"][animalStats["MS"]["list"][1]]
-            G.printAnim(f"{BE.curAnimal["name"]} used {animalStats["MS"]["list"][1]}")
-            wait(1)
-    while True:
-        if animalStats["HP"] <= 0:
-            break
-        if BE.checkDeath() > 0:
-            initDeath()
-        printMenu()
-        x = input(f"\n{" " * 6}< ! ) >>")
-        if x == move1.lower():
-            if localCDs[0] <= 0:
-                dealdmg(0)
-                runChance -= 5
-            else:
-                input(f"{" " * 5}It's on cooldown!")
-        elif x == move2.lower():
-            if localCDs[1] <= 0:
-                dealdmg(1)
-                runChance -= 5
-            else:
-                input(f"{" " * 5}It's on cooldown!")
-        elif x == move3.lower():
-            if localCDs[2] <= 0:
-                dealdmg(2)
-                runChance -= 5
-            else:
-                input(f"{" " * 5}It's on cooldown!")
-        elif x == "item":
-            pass
-        elif x == "run":
-            y = rRN(0, 100)
-            if y <= runChance:
-                pass
-            else:
-                pass
 
 # - ACTS MENU -
 
@@ -154,6 +73,7 @@ def initDisplay() -> None:
 
 def initMove() -> None:
     def arrivalAnim() -> None:
+        cls()
         G.fLocDisplay()
         print("\n")
         G.printAnim(BE.locList[BE.locList["list"][BE.curLoc[1]][BE.curLoc[0]]])
@@ -259,7 +179,11 @@ def initAct() -> None:
                 G.displayStat()
                 x = input(f"\n{" " * 6}Hunt the animal? (Y/n) >> ").lower()
                 if x != "n":
-                    initBattle()
+                    y = initBattle()
+                    if y == 0:
+                        pass
+                    elif y == 1:
+                        initDeath()
             elif BE.IsThereAnimal is False:
                 input(f"\n{" " * 6}It's not here yet...")
             else:

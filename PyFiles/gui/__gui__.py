@@ -376,6 +376,35 @@ def fInventoryMenu() -> str:
     << 'Back' to main menu
 """
 
+cowSpr: str = """
+             .  ____'....'
+              '( ;_'_'..'
+                | | | |
+"""
+
+sheepSpr: str = """
+                ._..,.--.,
+              "(_____'..'
+                |'|'| |
+"""
+
+goatSpr: str = """
+                ____|....|
+              '(_____'::'
+                |'|'|'|
+"""
+
+animalSprites: list = [cowSpr, sheepSpr, goatSpr]
+
+def fAnimalSprite() -> None:
+    sprs = {
+        "Cow": cowSpr,
+        "Sheep": sheepSpr,
+        "Goat": goatSpr
+    }
+    Sprite = sprs[BE.curAnimal["name"]]
+    print(Sprite)
+
 def fBattleMenu(cd1, cd2, cd3, chance) -> str:
     MS = BE.curmoveSet
     L = MS["list"]
