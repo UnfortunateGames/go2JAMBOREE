@@ -479,7 +479,7 @@ def taskAnim() -> None:
         "BT": A.fBTAnim(),
         "CB": A.fCBAnim()
     }
-    for x in range(0, 16):
+    for x in range(0, len(animList[BE.curTask])):
         cls()
         print(x)
         print(f"\n\n{" " * 11}_0_{" " * 11}_0_")
@@ -516,8 +516,8 @@ def fTaskDialogue() -> list:
     if BE.doneTask is True:
         return ["You have done your work.", "There is nothing else I can ask.", "Go ahead.", "Explore my creation."]
     elif BE.heardTask is False:
-        return ["You came back.", f"Your task is {BE.taskList[BE.curTask]["name"]}", "Carry on."]
-    return ["Did you forget?", f"I ordered you to {BE.taskList[BE.curTask]["name"]}"]
+        return ["You came back.", f"Your task is {BE.taskList[BE.curTask]["name"]}", BE.taskList[BE.curTask["name"]]["guide"][0], BE.taskList[BE.curTask["name"]]["guide"][1], "Carry on."]
+    return ["Have you forgetten?", f"I ordered you to {BE.taskList[BE.curTask]["name"]}", BE.taskList[BE.curTask["name"]]["guide"][0], BE.taskList[BE.curTask["name"]]["guide"][1], "Carry on."]
 
 def fRandomDialogue(dialogue, before) -> None:
     if dialogue == "task":

@@ -41,17 +41,78 @@ def animalChoice() -> None:
         BE.curStats[0] -= BE.curAnimal["moveSet"][choice]
     return choice
 
+slashAnim: list = [
+    """""",
+    f"""
+{" " * 20}.
+""",
+    f"""
+{" " * 20}.
+{" " * 19}'
+""",
+    f"""
+{" " * 20}.
+{" " * 18}.'
+""",
+    f"""
+{" " * 20}.
+{" " * 18}.'
+{" " * 17}|
+""",
+    f"""
+{" " * 20}.
+{" " * 18}.'
+{" " * 17}|
+{" " * 17}.
+{" " * 18}'
+""",
+    f"""
+{" " * 20}.
+{" " * 18}.'
+{" " * 17}|
+{" " * 17}.
+{" " * 18}'.
+{" " * 19}'
+""",
+    f"""
+{" " * 20}.
+{" " * 18}.'
+{" " * 17}|
+{" " * 17}.
+{" " * 18}'.
+{" " * 19}'-
+""",
+    f"""
+{" " * 20}.
+{" " * 18}.'
+{" " * 17}|
+{" " * 17}.
+{" " * 18}'.  .
+{" " * 19}'-'
+""",
+]
+
 def initBattle() -> None:
+    global inBattleTime
     def display() -> None:
         cls()
         G.displayStat()
         G.fAnimalSprite()
+    def fSlash() -> None:
+        for x in slashAnim:
+            cls()
+            G.displayStat()
+            print(x)
+            wait(0.85)
     def useMove(n=int) -> None:
         move = BE.curmoveSet[BE.curmoveSet["list"][n]]
         dealDMG(n)
         localCDs[n] = move[1]
+        fSlash()
+        wait(2)
     initBattleStats()
     while True:
+        inBattleTime += 1
         display()
         G.fBattleMenu()
         x = input(f"\n{" " * 6}< !! ) >> ").lower()
@@ -79,6 +140,10 @@ def initBattle() -> None:
         y = animalChoice()
         display()
         G.printAnim(f"{" " * 5}The enemy used {y}!")
+        if inBattleTime >= 2:
+            inBattleTime = 0
+            BE.GTime += 1
+            BE.updTVal()
         if localAStats["HP"] <= 0:
             return 0
         elif BE.checkDeath > 0:

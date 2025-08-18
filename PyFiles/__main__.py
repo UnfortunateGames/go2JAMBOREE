@@ -1,4 +1,4 @@
-from cmds.__cmds__ import cls, wait, rRN
+from cmds.__cmds__ import cls, wait
 from battle.__battle__ import initBattle
 import backend.__backend__ as BE
 import gui.__gui__ as G
@@ -38,7 +38,7 @@ def initDisplay() -> None:
             initDeath()
         cls()
         gamedisplay()
-        x = input("     < ! ) >> ").lower()
+        x = input("{" " * 5}< ! ) >> ").lower()
         if x == "move":
             G.curMenu = 1
             initMove()
@@ -60,7 +60,7 @@ def initDisplay() -> None:
                 cls()
                 initDisplay()
             else:
-                input(f"\n{" " * 9}I can't do that here.")
+                input(f"\n{" " * 5}I can't do that here.")
         elif x == keybinds["waitKB"]:
             initWait()
         elif x == keybinds["bagKB"]:
@@ -122,25 +122,25 @@ def initBag() -> None:
                 for x in range(0, 2):
                     BE.curStats += BE.itemList["meat"]["heal"][x]
             else:
-                input("     There is no Meat...")
+                input("{" " * 5}There is no Meat...")
         elif x == "apple":
             if BE.inventory["apple"] > 0:
                 BE.inventory["apple"] -= 1
                 for x in range(0, 2):
                     BE.curStats += BE.itemList["apple"]["heal"][x]
             else:
-                input("     There is no Apples...")
+                input("{" " * 5}There is no Apples...")
         elif x == "water":
             if BE.inventory["water"] > 0:
                 BE.inventory["water"] -= 1
                 for x in range(0, 2):
                     BE.curStats += BE.itemList["water"]["heal"][x]
             else:
-                input("     There is no Water...")
+                input("{" " * 5}There is no Water...")
         elif x  == keybinds["backKB"]:
             break
         else:
-            input(f"     {x} is not an item!")
+            input(f"{" " * 5}{x} is not an item!")
     G.curMenu = 0
 
 def initAct() -> None:
@@ -181,7 +181,14 @@ def initAct() -> None:
                 if x != "n":
                     y = initBattle()
                     if y == 0:
-                        pass
+                        cls()
+                        BE.isThereAnimal = False
+                        wait(1)
+                        prize = BE.curanimal["prize"]
+                        BE.curBag["meat"] += prize
+                        G.printAnim(f"You gained {prize} meat!")
+                        wait(1)
+                        break
                     elif y == 1:
                         initDeath()
             elif BE.IsThereAnimal is False:
@@ -196,10 +203,10 @@ def initAct() -> None:
 
 def initWait() -> None:
     if BE.canWait is False:
-        input("     I'm tired of waiting...")
+        input("{" " * 5}I'm tired of waiting...")
         return
     elif BE.WTime == "Night":
-        input("     I would rather sleep than wait...")
+        input("{" " * 5}I would rather sleep than wait...")
         return
     while True:
         cls()
@@ -263,7 +270,7 @@ def initDeath() -> None:
                 func = initIntro()
                 break
             else:
-                input(f"     {x} is not an option...")
+                input(f"{" " * 5}{x} is not an option...")
         func()
         return
     BE.hPlayer()
@@ -386,10 +393,10 @@ def initSettings() -> None:
                         y += 1
             except PermissionError:
                 G.Cprint("Unable to read!", 5)
-                input("     Press Enter to continue...")
+                input("{" " * 5}Press Enter to continue...")
             except FileNotFoundError:
                 G.Cprint("File is deleted or doesn't exist...")
-                input("     Press Enter to continue...")
+                input("{" " * 5}Press Enter to continue...")
             except Exception as e:
                 raise e
         elif x == "save":
@@ -397,13 +404,13 @@ def initSettings() -> None:
             if BE.saveG() is True:
                 input("\n     Game saved successfully!")
             elif BE.saveG() is False:
-                input("     An error was raised... Press enter to abort... ")
+                input("{" " * 5}An error was raised... Press enter to abort... ")
         elif x == "load":
             BE.loadG()
         elif x == "back":
             break
         else:
-            input(f"     {x} is not a valid option")
+            input(f"{" " * 5}{x} is not a valid option")
 
 def initChChar() -> None:
     global charHead
@@ -425,20 +432,20 @@ def initChChar() -> None:
             x += 1
         elif y == "get":
             if BE.charUnlock[x] is True:
-                input("     This character is already bought.")
+                input("{" " * 5}This character is already bought.")
             elif stats[x]["price"] < BE.curBadges:
                 BE.curBadges -= stats[x]["price"]
-                input("     Successfully bought character!")
+                input("{" " * 5}Successfully bought character!")
             elif stats[x]["price"] > BE.curBadges:
-                input("     Badges are too low.")
+                input("{" " * 5}Badges are too low.")
         elif y == "equip":
             if BE.charUnlock[x] is True:
                 BE.curChar = names[x]
                 BE.updCharVal()
                 G.updAVal()
-                input(f"     You have chosen {names[x]}!")
+                input(f"{" " * 5}You have chosen {names[x]}!")
             else:
-                input("     Buy the character first!")
+                input("{" " * 5}Buy the character first!")
         elif y == keybinds["backKB"]:
             break
         else:
@@ -467,35 +474,35 @@ def initKeyChange() -> None:
         x = input(f"\n{" " * 6}< ? ) >> ").lower()
         if BE.curMenu == 0:
             if x == "left":
-                lf = input(f"     < Current KB: {lf} ) >> ").lower()
+                lf = input(f"{" " * 5}< Current KB: {lf} ) >> ").lower()
             elif x == "up":
-                up = input(f"     < Current KB: {up} ) >> ").lower()
+                up = input(f"{" " * 5}< Current KB: {up} ) >> ").lower()
             elif x == "right":
-                ri = input(f"     < Current KB: {ri} ) >> ").lower()
+                ri = input(f"{" " * 5}< Current KB: {ri} ) >> ").lower()
             elif x == "down":
-                do = input(f"     < Current KB: {do} ) >> ").lower()
+                do = input(f"{" " * 5}< Current KB: {do} ) >> ").lower()
         if BE.curMenu == 1:
             if x == "act":
-                ac = input(f"     < Current KB: {ac} ) >> ").lower()
+                ac = input(f"{" " * 5}< Current KB: {ac} ) >> ").lower()
             elif x == "check":
-                ch = input(f"     < Current KB: {ch} ) >> ").lower()
+                ch = input(f"{" " * 5}< Current KB: {ch} ) >> ").lower()
             elif x == "ask":
-                ask = input(f"     < Current KB: {ask} ) >> ").lower()
+                ask = input(f"{" " * 5}< Current KB: {ask} ) >> ").lower()
             elif x == "wait":
-                wa = input(f"     < Current KB: {wa} ) >> ").lower()
+                wa = input(f"{" " * 5}< Current KB: {wa} ) >> ").lower()
             elif x == "sleep":
-                sl = input(f"     < Current KB: {sl} ) >> ").lower()
+                sl = input(f"{" " * 5}< Current KB: {sl} ) >> ").lower()
             elif x == "get":
-                ge = input(f"     < Current KB: {ge} ) >> ").lower()
+                ge = input(f"{" " * 5}< Current KB: {ge} ) >> ").lower()
         if BE.curMenu == 2:
             if x == "back":
-                bac = input(f"     < Current KB: {bac} ) >> ").lower()
+                bac = input(f"{" " * 5}< Current KB: {bac} ) >> ").lower()
             elif x == "menu":
-                me = input(f"     < Current KB: {me} ) >> ").lower()
+                me = input(f"{" " * 5}< Current KB: {me} ) >> ").lower()
             elif x == "bag":
-                bag = input(f"     < Current KB: {bag} ) >> ").lower()
+                bag = input(f"{" " * 5}< Current KB: {bag} ) >> ").lower()
             if x == "task":
-                ta = input(f"     < Current KB: {ta} ) >> ").lower()
+                ta = input(f"{" " * 5}< Current KB: {ta} ) >> ").lower()
         if x == "L":
             BE.curMenu += 1
             if BE.curMenu > 2:
@@ -507,7 +514,7 @@ def initKeyChange() -> None:
         elif x == "exit":
             break
         else:
-            input(f"     {x} is not a Keybind in the menu!")
+            input(f"{" " * 5}{x} is not a Keybind in the menu!")
     cls()
     x = input("\n\n\n     Save Changes? [Y/n] > ").lower()
     if x == "n":
