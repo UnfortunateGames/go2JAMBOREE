@@ -23,7 +23,7 @@ keybinds: dict = {
     "backKB": "back"
 }
 
-hasStartedGame: bool = False
+hasLoadedGame: bool = False
 
 # - ACTS MENU -
 
@@ -38,7 +38,7 @@ def initDisplay() -> None:
             initDeath()
         cls()
         gamedisplay()
-        x = input("{" " * 5}< ! ) >> ").lower()
+        x = input(f"{" " * 5}< ! ) >> ").lower()
         if x == "move":
             G.curMenu = 1
             initMove()
@@ -122,21 +122,21 @@ def initBag() -> None:
                 for x in range(0, 2):
                     BE.curStats += BE.itemList["meat"]["heal"][x]
             else:
-                input("{" " * 5}There is no Meat...")
+                input(f"{" " * 5}There is no Meat...")
         elif x == "apple":
             if BE.inventory["apple"] > 0:
                 BE.inventory["apple"] -= 1
                 for x in range(0, 2):
                     BE.curStats += BE.itemList["apple"]["heal"][x]
             else:
-                input("{" " * 5}There is no Apples...")
+                input(f"{" " * 5}There is no Apples...")
         elif x == "water":
             if BE.inventory["water"] > 0:
                 BE.inventory["water"] -= 1
                 for x in range(0, 2):
                     BE.curStats += BE.itemList["water"]["heal"][x]
             else:
-                input("{" " * 5}There is no Water...")
+                input(f"{" " * 5}There is no Water...")
         elif x  == keybinds["backKB"]:
             break
         else:
@@ -203,10 +203,10 @@ def initAct() -> None:
 
 def initWait() -> None:
     if BE.canWait is False:
-        input("{" " * 5}I'm tired of waiting...")
+        input(f"{" " * 5}I'm tired of waiting...")
         return
     elif BE.WTime == "Night":
-        input("{" " * 5}I would rather sleep than wait...")
+        input(f"{" " * 5}I would rather sleep than wait...")
         return
     while True:
         cls()
@@ -348,10 +348,17 @@ def initMenu() -> None:
         G.menuScroll(G.mainMenu)
         x = input("\n\n     < ) >> ").lower()
         if x == "continue":
-            cls()
-            G.printAnim(G.fLocDisplay())
-            wait(1)
-            initDisplay()
+            if hasLoadedGame is True:
+                cls()
+                G.printAnim(G.fLocDisplay(True))
+                wait(1)
+                initDisplay()
+            else:
+                cls()
+                print("\n\n\n\n")
+                G.Cprint("Game has not loaded!")
+                G.Cprint("The game will crash without loading.")
+                input("\nLoad the game first! ")
         elif x == "new game" or x == "new":
             hasStartedGame = True
             BE.updCharVal()
@@ -372,7 +379,9 @@ def initMenu() -> None:
             input(f"\n{" " * 10}{x} is not a valid command! ")
 
 def initSettings() -> None:
+    global hasLoadedGame
     cls()
+    print("\n\n\n\n")
     G.Cprint("Make sure to remember")
     G.Cprint("Your Keybinds! UI elements")
     G.Cprint("Will not change!")
@@ -393,10 +402,10 @@ def initSettings() -> None:
                         y += 1
             except PermissionError:
                 G.Cprint("Unable to read!", 5)
-                input("{" " * 5}Press Enter to continue...")
+                input(f"{" " * 5}Press Enter to continue...")
             except FileNotFoundError:
                 G.Cprint("File is deleted or doesn't exist...")
-                input("{" " * 5}Press Enter to continue...")
+                input(f"{" " * 5}Press Enter to continue...")
             except Exception as e:
                 raise e
         elif x == "save":
@@ -404,9 +413,11 @@ def initSettings() -> None:
             if BE.saveG() is True:
                 input("\n     Game saved successfully!")
             elif BE.saveG() is False:
-                input("{" " * 5}An error was raised... Press enter to abort... ")
+                input(f"{" " * 5}An error was raised... Press enter to abort... ")
         elif x == "load":
-            BE.loadG()
+            x = BE.loadG()
+            if x is True:
+                hasLoadedGame = True
         elif x == "back":
             break
         else:
@@ -432,12 +443,12 @@ def initChChar() -> None:
             x += 1
         elif y == "get":
             if BE.charUnlock[x] is True:
-                input("{" " * 5}This character is already bought.")
+                input(f"{" " * 5}This character is already bought.")
             elif stats[x]["price"] < BE.curBadges:
                 BE.curBadges -= stats[x]["price"]
-                input("{" " * 5}Successfully bought character!")
+                input(f"{" " * 5}Successfully bought character!")
             elif stats[x]["price"] > BE.curBadges:
-                input("{" " * 5}Badges are too low.")
+                input(f"{" " * 5}Badges are too low.")
         elif y == "equip":
             if BE.charUnlock[x] is True:
                 BE.curChar = names[x]
@@ -445,7 +456,7 @@ def initChChar() -> None:
                 G.updAVal()
                 input(f"{" " * 5}You have chosen {names[x]}!")
             else:
-                input("{" " * 5}Buy the character first!")
+                input(f"{" " * 5}Buy the character first!")
         elif y == keybinds["backKB"]:
             break
         else:
@@ -457,7 +468,7 @@ def initKeyChange() -> None:
     up = keybinds["upKB"]
     ri = keybinds["rightKB"]
     do = keybinds["rightKB"]
-    ac = keybinds["ac"]
+    ac = keybinds["actsKB"]
     ch = keybinds["checkKB"]
     ask = keybinds["askKB"]
     wa = keybinds["waitKB"]
@@ -472,7 +483,7 @@ def initKeyChange() -> None:
         print(G.logo)
         G.menuScroll(G.fKeyCh())
         x = input(f"\n{" " * 6}< ? ) >> ").lower()
-        if BE.curMenu == 0:
+        if G.curMenu == 0:
             if x == "left":
                 lf = input(f"{" " * 5}< Current KB: {lf} ) >> ").lower()
             elif x == "up":
@@ -481,7 +492,7 @@ def initKeyChange() -> None:
                 ri = input(f"{" " * 5}< Current KB: {ri} ) >> ").lower()
             elif x == "down":
                 do = input(f"{" " * 5}< Current KB: {do} ) >> ").lower()
-        if BE.curMenu == 1:
+        if G.curMenu == 1:
             if x == "act":
                 ac = input(f"{" " * 5}< Current KB: {ac} ) >> ").lower()
             elif x == "check":
@@ -494,7 +505,7 @@ def initKeyChange() -> None:
                 sl = input(f"{" " * 5}< Current KB: {sl} ) >> ").lower()
             elif x == "get":
                 ge = input(f"{" " * 5}< Current KB: {ge} ) >> ").lower()
-        if BE.curMenu == 2:
+        if G.curMenu == 2:
             if x == "back":
                 bac = input(f"{" " * 5}< Current KB: {bac} ) >> ").lower()
             elif x == "menu":
@@ -504,13 +515,13 @@ def initKeyChange() -> None:
             if x == "task":
                 ta = input(f"{" " * 5}< Current KB: {ta} ) >> ").lower()
         if x == "L":
-            BE.curMenu += 1
-            if BE.curMenu > 2:
-                BE.curMenu = 0
+            G.curMenu += 1
+            if G.curMenu > 2:
+                G.curMenu = 0
         elif x == "R":
-            BE.curMenu -= 1
-            if BE.curMenu < 0:
-                BE.curMenu = 2
+            G.curMenu -= 1
+            if G.curMenu < 0:
+                G.curMenu = 2
         elif x == "exit":
             break
         else:

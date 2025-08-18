@@ -301,7 +301,7 @@ def displayStat() -> str:
     gtime = f" {BE.GTime}" if BE.GTime < 10 else BE.GTime
     task = "is " if BE.doneTask is True else "not" 
     print(f""".'.{curHead}.| Hunger  : {hggap}{BE.curStats[2]} | Time: {gtime}      '.
-|::{curBody}| Stamina : {staminagap}{BE.curStats[1]} | It is {BE.WTime}    |
+|::{curBody}| Stamina : {staminagap}{BE.curStats[1]} | It is {f"{BE.WTime}  " if BE.WTime == "Day" else BE.WTime}   |
 '.==HP==[{"#"*HPamnt}{noBar}]==| Task {task} Done .'""")
 
 def fLocDisplay(returnSprite=False) -> None or str:

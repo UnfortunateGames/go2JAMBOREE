@@ -4,9 +4,11 @@ right
 down
 task
 acts
+bag
 check
 ask
 wait
 sleep
-back
+get
 menu
+back

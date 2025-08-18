@@ -1,6 +1,12 @@
 Newbie
 [10, 15, 10]
+0
+0
+0
+0
+[True, False, False, False]
 [1, 0]
 0
-None
+Day
 False
+0
