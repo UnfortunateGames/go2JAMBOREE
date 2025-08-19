@@ -4,8 +4,8 @@
 cHead: str = " o "
 cBody: str = "/|\ "
 
-head: list = None
-body: list = None
+head: list = list(cHead)
+body: list = list(cBody)
 
 def fCTAnim() -> list:
     return [

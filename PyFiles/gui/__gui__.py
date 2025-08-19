@@ -15,6 +15,8 @@ curMenu: int = 0
 def updAVal() -> None:
     A.cHead = curHead
     A.cBody = curHead
+    A.head = list(A.cHead)
+    A.body = list(A.cBody)
 
 # - MAIN MENUS -
 
@@ -301,7 +303,7 @@ def displayStat() -> str:
     gtime = f" {BE.GTime}" if BE.GTime < 10 else BE.GTime
     task = "is " if BE.doneTask is True else "not" 
     print(f""".'.{curHead}.| Hunger  : {hggap}{BE.curStats[2]} | Time: {gtime}      '.
-|::{curBody}| Stamina : {staminagap}{BE.curStats[1]} | It is {f"{BE.WTime}  " if BE.WTime == "Day" else BE.WTime}   |
+|::{curBody}| Stamina : {staminagap}{BE.curStats[1]} | It is {f"{BE.WTime}  " if BE.WTime == "Day" else BE.WTime}    |
 '.==HP==[{"#"*HPamnt}{noBar}]==| Task {task} Done .'""")
 
 def fLocDisplay(returnSprite=False) -> None or str:
@@ -516,8 +518,8 @@ def fTaskDialogue() -> list:
     if BE.doneTask is True:
         return ["You have done your work.", "There is nothing else I can ask.", "Go ahead.", "Explore my creation."]
     elif BE.heardTask is False:
-        return ["You came back.", f"Your task is {BE.taskList[BE.curTask]["name"]}", BE.taskList[BE.curTask["name"]]["guide"][0], BE.taskList[BE.curTask["name"]]["guide"][1], "Carry on."]
-    return ["Have you forgetten?", f"I ordered you to {BE.taskList[BE.curTask]["name"]}", BE.taskList[BE.curTask["name"]]["guide"][0], BE.taskList[BE.curTask["name"]]["guide"][1], "Carry on."]
+        return ["You came back.", f"Your task is {BE.taskList[BE.curTask]["name"]}", BE.taskList[BE.curTask]["guide"][0], BE.taskList[BE.curTask]["guide"][1], "Carry on."]
+    return ["Have you forgetten?", f"I ordered you to {BE.taskList[BE.curTask]["name"]}", BE.taskList[BE.curTask]["guide"][0], BE.taskList[BE.curTask]["guide"][1], "Carry on."]
 
 def fRandomDialogue(dialogue, before) -> None:
     if dialogue == "task":
