@@ -1,6 +1,11 @@
 # Go 2 JAMBOREE!
 
-![Image](https://media.discordapp.net/attachments/1068871874450313257/1398188159489019934/Untitled41_20250725141543.png?ex=688473b2&is=68832232&hm=86b7ea49ddb2e34e103fca38f9b3c72d2a4bb893455d3a9c615a14f0ae45f9e8&=&format=webp&quality=lossless&width=792&height=396)
+```
+       |.~~~go-2~~~~~~~~~~~~~~~.|
+    .   --. _ . . _  _  _  __ __   .
+    ."= , ||-||v||-'| ||-'|- |-  =".
+     "= '_'| || ||_''_'| )'__'__ ="
+```
 
 ## About The Game
 
@@ -43,10 +48,20 @@ And other things...
  - [ ] Add more characters
  - [x] ACTUAL survival
  - [ ] Add weather
- - I will never do music
  - [ ] Turn-based hunting
  - [ ] Story-Mode? ( I'll try )
  - [ ] RELEASE!
+
+## ANOUNCEMENTS
+
+After v0.3.0-alpha releases, I will halt commits.
+And start learning C, since I have to spread my programming knowledge.
+Though I promise it won't be long. I SWEAR I'm not losing passion
+
+v0.4.0 Onwards will be beta. and up until v0.6.0 will be almost release.
+All features are gravitating towards bug fixes and patches until then.
+
+Hope you have a good year!
 
 ## Q&A
 
@@ -56,7 +71,8 @@ And other things...
 > "Because I wanted to."
 3. Why is some bugs/features there or not?
 > "It's in alpha, Download the source code instead."
-> [! Rolling release was removed]
+> [!WARNING]
+> Rolling Release was removed on v0.2.0-alpha
 4. When are you gonna release/finalize it?
 > "After version v0.6.0-beta"
 5. Do you have a roadmap?
