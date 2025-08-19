@@ -71,6 +71,7 @@ Hope you have a good year!
 > "Because I wanted to."
 3. Why is some bugs/features there or not?
 > "It's in alpha, Download the source code instead."
+
 > [!WARNING]
 > Rolling Release was removed on v0.2.0-alpha
 4. When are you gonna release/finalize it?
