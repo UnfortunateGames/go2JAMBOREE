@@ -11,14 +11,11 @@
 ```
 ## ANOUNCEMENTS
 
-After v0.3.0-alpha releases, I will halt commits.
-And start learning C++ and C#, since I have to spread my programming knowledge.
-Though I promise it won't be long. I SWEAR I'm not losing passion
+I will now rework the entirety of go 2 JAMBOREE
 
-v0.4.0 Onwards will be beta. and up until v0.6.0 will be almost release.
-All features are gravitating towards bug fixes and patches until then.
+As I learned classes, and the advantages of it and more ethical coding.
 
-Hope you have a good year!
+This will now be an archive. Check out the other build I will make, and so please take this noob code with a grain of salt.
 
 ## About The Game
 
