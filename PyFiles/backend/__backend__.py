@@ -287,6 +287,11 @@ curBag: dict = {
     "water": 0
 }
 
+seenLocs: dict = {
+    0: [False, False, True, False],
+    1: [False, False, False, False]
+}
+
 # [Crude Axe, Normal Axe, Pickaxe, God's Blade]
 curWeapons: list = [False, False, False, False]
 curEquip: str = None 
@@ -424,6 +429,10 @@ def initVar() -> None:
     IsThereAnimal = PLanimalChance()
     canSleep = doneTask = heardTask = False
     canWait = True
+    for x in range(0, 1):
+        for y in range(0, 3):
+            seenLocs[x][y] = False
+    seenLocs[0][2] = True
     # ! curRNG unused until Weather is implemented
     # curRNG = rRN(0, 3)
     curAnimal = animalList[rRN(0, 2)]

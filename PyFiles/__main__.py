@@ -6,6 +6,8 @@ import gui.__gui__ as G
 # Might uhhh...
 # Run out of passion because of this...
 
+# KEYBINDS: These are use-cases for each in-game option
+# ! NOTE THAT OUTSIDE OF THE GAME MENUS ARE EXCLUDED
 keybinds: dict = {
     "leftKB": "left",
     "upKB": "up",
@@ -23,15 +25,22 @@ keybinds: dict = {
     "backKB": "back"
 }
 
+# Just a boolean variable that decides whether if
+# the game loads in with an animation or not
 hasLoadedGame: bool = False
 
 # - ACTS MENU -
 
+# Saves some space
+# Self-Explanatory, Game Display
 def gamedisplay() -> None:
     G.fLocDisplay()
     G.displayStat()
     G.actScroll()
 
+# In-Game: Main Menu
+# A default in game menu
+# Just the main acts menu
 def initDisplay() -> None:
     while True:
         if BE.checkDeath() > 0:
@@ -71,13 +80,33 @@ def initDisplay() -> None:
         else:
             input(f"\n{" " * 6}{x}? I can't do that...")
 
-def initMove() -> None:
-    def arrivalAnim() -> None:
+# Animation! I may move this to GUI
+def arrivalAnim() -> None:
+    cls()
+    G.fLocDisplay()
+    print("\n")
+    G.printAnim(BE.locList[BE.locList["list"][BE.curLoc[1]][BE.curLoc[0]]])
+    wait(1)
+
+# Move: Fast Travel
+# A in-game menu that features, well fast travel!
+# Though wastes more energy
+def initFTravel() -> None:
+    while True:
+        BE.mvGTime()
+        BE.updTVal()
+        if BE.updTVal() == 1:
+            BE.hPlayer("hp", BE.curDrainStats[0])
+            BE.hPlayer("stamina", BE.curDrainStats[1])
+        if BE.checkDeath() > 0:
+            initDeath()
         cls()
-        G.fLocDisplay()
-        print("\n")
-        G.printAnim(BE.locList[BE.locList["list"][BE.curLoc[1]][BE.curLoc[0]]])
-        wait(1)
+        gamedisplay()
+        # x = input(f"{" " * 6}< ! ?? ) >>").lower()
+        
+        
+# Acts: Move
+def initMove() -> None:
     while True:
         BE.mvGTime()
         BE.updTVal()
@@ -292,6 +321,7 @@ def initPunish() -> None:
     dialogue = [
         "My creation.",
         "Why must you ignore me?",
+        "You have not done your tasks.",
         "You shalt not disobey.",
         "You must be punished."
     ]

@@ -1,11 +1,24 @@
 # Go 2 JAMBOREE!
 
 ```
-       |.~~~go-2~~~~~~~~~~~~~~~.|
-    .   --. _ . . _  _  _  __ __   .
-    ."= , ||-||v||-'| ||-'|- |-  =".
-     "= '_'| || ||_''_'| )'__'__ ="
+
+                         |.~~~go-2~~~~~~~~~~~~~~~.|
+                     .   --. _ . . _  _  _  __ __   .
+                     ."= , ||-||v||-'| ||-'|- |-  =".
+                      "= '_'| || ||_''_'| )'__'__ ="
+                      
+                           MADE BY: ElectricSplash
 ```
+## ANOUNCEMENTS
+
+After v0.3.0-alpha releases, I will halt commits.
+And start learning C++ and C#, since I have to spread my programming knowledge.
+Though I promise it won't be long. I SWEAR I'm not losing passion
+
+v0.4.0 Onwards will be beta. and up until v0.6.0 will be almost release.
+All features are gravitating towards bug fixes and patches until then.
+
+Hope you have a good year!
 
 ## About The Game
 
@@ -25,6 +38,26 @@ As I said it is still in **ALPHA**, changes may range from little to *bug fixes*
 I plan to move this to Lua and maybe recreate it in Love2D.
 
 ## How to play
+
+### How to run the game
+
+**WINDOWS:**
+Run the runGame.bat Batch File.
+
+REQUIREMENTS: Python
+
+**LINUX & MAC:**
+Run the .sh Shell File. Though you may need to chmod it.
+
+REQUIREMENTS: Python, Execution Permission
+
+If the Shell wont run, run the following:
+```
+chmod +x [FILE]
+```
+Replace [FILE] with runGame.sh or your path.
+
+### How to survive the game
 
 **EAT!!1!**
 You can eat meat, apples, and water.
@@ -52,16 +85,6 @@ And other things...
  - [ ] Story-Mode? ( I'll try )
  - [ ] RELEASE!
 
-## ANOUNCEMENTS
-
-After v0.3.0-alpha releases, I will halt commits.
-And start learning C, since I have to spread my programming knowledge.
-Though I promise it won't be long. I SWEAR I'm not losing passion
-
-v0.4.0 Onwards will be beta. and up until v0.6.0 will be almost release.
-All features are gravitating towards bug fixes and patches until then.
-
-Hope you have a good year!
 
 ## Q&A
 

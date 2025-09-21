@@ -325,46 +325,79 @@ def fLocDisplay(returnSprite=False) -> None or str:
     print(Sprite)
 
 def fmainActs() -> str:
+    acts = "!" if BE.curLoc == [0, 1] or BE.curLoc == [1, 0] else " "
+    task = "!" if BE.checkTask() is True else " "
+    wait = "!" if BE.canWait is True else " "
     return f"""
      Main Options:
        (  Move  )=============[ ! ]
-       (  Acts  )=============[ {"!" if BE.curLoc == [0, 1] or BE.curLoc == [1, 0]else " "} ]
-       (  Task  )=============[ {"!" if BE.checkTask() is True else " "} ]
-       (  Wait  )=============[ {"!" if BE.canWait is True else " "} ]
+       (  Acts  )=============[ {acts} ]
+       (  Task  )=============[ {task} ]
+       (  Wait  )=============[ {wait} ]
           >> [ 'Bag' ] ->
     << 'Menu' to Main Menu
 """
 
 def fmoveActs() -> str:
+    up = "!" if BE.curLoc[1] != 0 else " "
+    left = "!" if BE.curLoc[0] != 0 else " "
+    right = "!" if BE.curLoc[0] != 3 else " "
+    down = "!" if BE.curLoc[1] != 1 else " "
     return f"""
      Move Where? :
-                 [{"!" if BE.curLoc[1] != 0 else " "}]-.
-        [{"!" if BE.curLoc[0] != 0 else " "}]-.    ( Up )
+                 [{up}]-.
+        [{left}]-.    ( Up )
          ( Left )  <>  (Right)
-                 (Down)   '-[{"!" if BE.curLoc[0] != 3 else " "}]
-                 '-[{"!" if BE.curLoc[1] != 1 else " "}]
+                 (Down)   '-[{right}]
+                 '-[{down}]
+              Fast Travel: 'FT' >
     < 'Back' to Main Options
 """
 
+def ffastTravel() -> str:
+    forestEntrance = "FE" if BE.seenLocs[0][0] is True else "??"
+    campSite = "Ca" if BE.seenLocs[0][1] is True else "??"
+    spawnSite = "Sp" if BE.seenLocs[0][2] is True else "??"
+    cliff0 = "C0" if BE.seenLocs[0][3] is True else "??"
+    altar = "Al" if BE.seenLocs[1][0] is True else "??"
+    smallLake = "SL" if BE.seenLocs[1][1] is True else "??"
+    plains = "Pl" if BE.seenLocs[1][2] is True else "??"
+    cliff1 = "C1" if BE.seenLocs[1][3] is True else "??"
+    return f"""
+     Fast Travel:
+        !! : FT consumes more
+             energy than Move
+        [ {forestEntrance} ] [ {campSite} ] [ {spawnSite} ] [ {cliff0} ]
+        [ {altar} ] [ {smallLake} ] [ {plains} ] [ {cliff1} ]
+      < 'MV': Move
+    < 'Back' to Main options
+"""
+
 def factionActs() -> str:
+    sleep = "!" if BE.curLoc == [1, 0] and BE.canSleep is True else " "
+    ask = "!" if BE.curLoc == [0, 1] else " "
+    get = "!" if canCollect() > 0 and BE.IsThereAnimal is True else " "
     return f"""
      What do I do? :
-       ( Sleep )==============[ {"!" if BE.curLoc == [1, 0] and BE.canSleep is True else " "} ]
+       ( Sleep )==============[ {sleep} ]
        ( Check )==============[ ! ]
-       (  Ask  )==============[ {"!" if BE.curLoc == [0, 1] else " "} ]
-       (  Get  )==============[ {"!" if canCollect() > 0 and BE.IsThereAnimal is True else " "} ]
+       (  Ask  )==============[ {ask} ]
+       (  Get  )==============[ {get} ]
 
     < 'Back' to Main Options
 """
 
 def fcheckActs() -> str:
+    task = "!" if BE.doneTask is False else "~"
+    sleep = "!" if BE.canSleep is True else "~"
+    wait = "!" if BE.canWait is True else "~"
     return f"""
      I can do these right now...
          [ ! = Can do | ~ = Can't ]
 
-       ( Task  )==============[ {"!" if BE.doneTask is False else "~"} ]
-       ( Sleep )==============[ {"!" if BE.canSleep is True else "~"} ]
-       ( Wait  )==============[ {"!" if BE.canWait is True else "~"} ]
+       ( Task  )==============[ {task} ]
+       ( Sleep )==============[ {sleep} ]
+       ( Wait  )==============[ {wait} ]
 """
 
 def fInventoryMenu() -> str:
@@ -408,6 +441,9 @@ def fAnimalSprite() -> None:
     print(Sprite)
 
 def fBattleMenu(cd1, cd2, cd3, chance) -> str:
+
+    # ! Dear me, please revise this. This is diabolical.
+
     MS = BE.curmoveSet
     L = MS["list"]
     move1L = list(L[0])
