@@ -11,11 +11,10 @@
 ```
 ## ANOUNCEMENTS
 
-I will now rework the entirety of go 2 JAMBOREE
+ARCHIVED
+This will no longer be updated.
 
-As I learned classes, and the advantages of it and more ethical coding.
-
-This will now be an archive. Check out the other build I will make, and so please take this noob code with a grain of salt.
+Go to https://github.com/UnfortunateGames/g2J-Re-Code
 
 ## About The Game
 
